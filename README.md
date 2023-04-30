@@ -2,6 +2,8 @@
 
 This package will help to add some custom placeholder components like `custom-index-header`, `custom-index-toolbar`, `custom-detail-header`, `custom-detail-toolbar`, etc in various section in views. It provides a much easier API for it and it allows you to use these "placeholder" components multiple times without overwriting each other.
 
+![screenshot](https://user-images.githubusercontent.com/21066418/235350026-dd4a649f-01f2-4057-a6e6-9e147ec76fb6.png)
+
 ## Requirements
 
 * PHP (^8.1 or higher)
