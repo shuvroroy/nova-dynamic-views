@@ -4,6 +4,10 @@ This package will help to add some custom placeholder components like `custom-in
 
 ![screenshot](https://user-images.githubusercontent.com/21066418/235350026-dd4a649f-01f2-4057-a6e6-9e147ec76fb6.png)
 
+## Support For This Project
+[![Buy me a coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-Donate-yellow?style=for-the-badge&logo=buymeacoffee)](https://www.buymeacoffee.com/shuvroroy)
+
+
 ## Requirements
 
 * PHP (^8.1 or higher)
@@ -135,7 +139,7 @@ If you want to show this button only on a specific resource, for example only fo
 
 ## Available methods and areas
 
-All `custom-*-*` nova placeholders (except `custom-dashboard-header`) are available as camel case methods postfixed with `Components`:
+All `custom-*-*` nova placeholders are available as camel case methods postfixed with `Components`:
 
 - [x] `customIndexHeaderComponents`
 - [x] `customIndexToolbarComponents`
