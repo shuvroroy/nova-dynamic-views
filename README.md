@@ -1,12 +1,17 @@
 # Nova dynamic views
 
+[![PHP Version Require](http://poser.pugx.org/shuvroroy/nova-dynamic-views/require/php)](https://packagist.org/packages/shuvroroy/nova-dynamic-views)
+[![Latest Stable Version](http://poser.pugx.org/shuvroroy/nova-dynamic-views/v)](https://packagist.org/packages/shuvroroy/nova-dynamic-views)
+[![Total Downloads](http://poser.pugx.org/shuvroroy/nova-dynamic-views/downloads)](https://packagist.org/packages/shuvroroy/nova-dynamic-views) 
+[![License](http://poser.pugx.org/shuvroroy/nova-dynamic-views/license)](https://packagist.org/packages/shuvroroy/nova-dynamic-views)
+
 This package will help to add some custom placeholder components like `custom-index-header`, `custom-index-toolbar`, `custom-detail-header`, `custom-detail-toolbar`, etc in various section in views. It provides a much easier API for it and it allows you to use these "placeholder" components multiple times without overwriting each other.
 
 ![screenshot](https://user-images.githubusercontent.com/21066418/235350026-dd4a649f-01f2-4057-a6e6-9e147ec76fb6.png)
 
 ## Support For This Project
-[![Buy me a coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-Donate-yellow?style=for-the-badge&logo=buymeacoffee)](https://www.buymeacoffee.com/shuvroroy)
 
+<a href="https://www.buymeacoffee.com/shuvroroy" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
 
 ## Requirements
 
@@ -163,4 +168,12 @@ php artisan nova:resource-tool acme/my-index-toolbar-btn
 
 and say yes to all questions of the prompt. Now you can use this component (located ad `nova-components/my-index-toolbar-btn`) inside your `customXXXComponents` (f.e. `customIndexToolbarComponents`)
 
+## Credits
 
+- [Shuvro Roy](https://github.com/shuvroroy)
+- [Bernhard Hörmann](https://github.com/bernhardh)
+- [All Contributors](../../contributors)
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
