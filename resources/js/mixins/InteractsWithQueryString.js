@@ -1,6 +1,7 @@
 import forEach from 'lodash/forEach'
 import { Inertia } from '@inertiajs/inertia'
 import filled from './../util/filled'
+import clone from 'lodash/cloneDeep'
 
 let compiledSearchParams = null
 
@@ -21,7 +22,7 @@ export default {
      */
     updateQueryString(value) {
       let searchParams = new URLSearchParams(window.location.search)
-      let page = Inertia.page
+      let page = Inertia.page || clone(this.$page)
 
       forEach(value, (v, i) => {
         if (!filled(v)) {
