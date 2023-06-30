@@ -56,14 +56,14 @@ export default {
      * Get field attribue value event name.
      */
     fieldAttributeValueEventName() {
-      return this.getFieldAttributeValueEventName(this.field.attribute)
+      return this.getFieldAttributeValueEventName(this.fieldAttribute)
     },
 
     /**
      * Get field attribue value event name.
      */
     fieldAttributeChangeEventName() {
-      return this.getFieldAttributeChangeEventName(this.field.attribute)
+      return this.getFieldAttributeChangeEventName(this.fieldAttribute)
     },
   },
 }

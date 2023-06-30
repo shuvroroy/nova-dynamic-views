@@ -7,18 +7,17 @@ export default {
   extends: FormEvents,
   props: {
     ...mapProps([
+      'nested',
       'shownViaNewRelationModal',
       'field',
       'viaResource',
       'viaResourceId',
       'viaRelationship',
       'resourceName',
+      'resourceId',
       'showHelpText',
       'mode',
     ]),
-    formUniqueId: {
-      type: String,
-    },
   },
 
   data: () => ({ value: '' }),
@@ -56,7 +55,7 @@ export default {
      * field's internal value attribute
      */
     fill(formData) {
-      this.fillIfVisible(formData, this.field.attribute, String(this.value))
+      this.fillIfVisible(formData, this.fieldAttribute, String(this.value))
     },
 
     /**
@@ -75,8 +74,15 @@ export default {
       this.value = event.target.value
 
       if (this.field) {
-        this.emitFieldValueChange(this.field.attribute, this.value)
+        this.emitFieldValueChange(this.fieldAttribute, this.value)
       }
+    },
+
+    /**
+     * Clean up any side-effects when removing this field dynamically (Repeater).
+     */
+    beforeRemove() {
+      //
     },
 
     listenToValueChanges(value) {

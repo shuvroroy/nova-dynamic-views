@@ -106,11 +106,23 @@ export default {
      * Fill draft id for the field
      */
     fillAttachmentDraftId(formData) {
-      this.fillIfVisible(
-        formData,
-        `${this.fieldAttribute}DraftId`,
-        this.draftId
-      )
+      let attribute = this.fieldAttribute
+
+      let [name, ...nested] = attribute.split('[')
+
+      if (!isNil(nested) && nested.length > 0) {
+        let last = nested.pop()
+
+        if (nested.length > 0) {
+          attribute = `${name}[${nested.join('[')}[${last.slice(0, -1)}DraftId]`
+        } else {
+          attribute = `${name}[${last.slice(0, -1)}DraftId]`
+        }
+      } else {
+        attribute = `${attribute}DraftId`
+      }
+
+      this.fillIfVisible(formData, attribute, this.draftId)
     },
   },
 }

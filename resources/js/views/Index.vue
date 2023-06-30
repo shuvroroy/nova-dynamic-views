@@ -38,9 +38,8 @@
     </Heading>
 
     <template v-if="!shouldBeCollapsed">
-      <div class="flex">
+      <div class="flex mb-6">
         <IndexSearchInput
-          :class="{ 'mb-6': !viaResource }"
           v-if="
             resourceInformation && resourceInformation.searchable && !viaHasOne
           "
@@ -51,26 +50,48 @@
           @update:keyword="search = $event"
         />
 
-        <div class="w-full flex items-center" :class="{ 'mb-6': !viaResource }">
+        <div class="flex w-full justify-end">
           <custom-index-toolbar
             v-if="!viaResource"
             :resource-name="resourceName"
           />
 
-          <!-- Create / Attach Button -->
-          <CreateResourceButton
-            :label="createButtonLabel"
-            :singular-name="singularName"
-            :resource-name="resourceName"
-            :via-resource="viaResource"
-            :via-resource-id="viaResourceId"
-            :via-relationship="viaRelationship"
-            :relationship-type="relationshipType"
-            :authorized-to-create="authorizedToCreate && !resourceIsFull"
-            :authorized-to-relate="authorizedToRelate"
-            class="flex-shrink-0 ml-auto"
-            :class="{ 'mb-6': viaResource }"
-          />
+          <div
+            v-if="
+              availableStandaloneActions.length > 0 ||
+              authorizedToCreate ||
+              authorizedToRelate
+            "
+            class="inline-flex items-center space-x-2 flex-shrink-0"
+          >
+            <!-- Action Dropdown -->
+            <ActionDropdown
+              v-if="availableStandaloneActions.length > 0"
+              @actionExecuted="() => fetchPolicies()"
+              :resource-name="resourceName"
+              :via-resource="viaResource"
+              :via-resource-id="viaResourceId"
+              :via-relationship="viaRelationship"
+              :relationship-type="relationshipType"
+              :actions="availableStandaloneActions"
+              :selected-resources="selectedResourcesForActionSelector"
+              trigger-dusk-attribute="index-standalone-action-dropdown"
+            />
+
+            <!-- Create / Attach Button -->
+            <CreateResourceButton
+              :label="createButtonLabel"
+              :singular-name="singularName"
+              :resource-name="resourceName"
+              :via-resource="viaResource"
+              :via-resource-id="viaResourceId"
+              :via-relationship="viaRelationship"
+              :relationship-type="relationshipType"
+              :authorized-to-create="authorizedToCreate && !resourceIsFull"
+              :authorized-to-relate="authorizedToRelate"
+              class="flex-shrink-0"
+            />
+          </div>
         </div>
       </div>
 
@@ -205,6 +226,7 @@
 </template>
 
 <script>
+// this.$refs.selectControl.selectedIndex = 0
 import { CancelToken, isCancel } from 'axios'
 import {
   HasCards,
@@ -217,8 +239,9 @@ import {
   InteractsWithResourceInformation,
   InteractsWithQueryString,
   SupportsPolling,
-} from './../mixins'
-import { minimum } from './../util'
+} from '@/mixins'
+import { minimum } from '@/util'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'ResourceIndex',
@@ -254,17 +277,11 @@ export default {
     actionCanceller: null,
   }),
 
-  setup() {
-    //
-  },
-
   /**
    * Mount the component and retrieve its initial data.
    */
   async created() {
-    if (!this.resourceInformation) {
-      return
-    }
+    if (!this.resourceInformation) return
 
     // Bind the keydown event listener when the router is visited if this
     // component is not a relation on a Detail page
@@ -297,6 +314,8 @@ export default {
   },
 
   methods: {
+    ...mapActions(['fetchPolicies']),
+
     /**
      * Handle the keydown event
      */
@@ -304,9 +323,9 @@ export default {
       // `c`
       if (
         this.authorizedToCreate &&
-        e.target.tagName != 'INPUT' &&
-        e.target.tagName != 'TEXTAREA' &&
-        e.target.contentEditable != 'true'
+        e.target.tagName !== 'INPUT' &&
+        e.target.tagName !== 'TEXTAREA' &&
+        e.target.contentEditable !== 'true'
       ) {
         Nova.visit(`/resources/${this.resourceName}/new`)
       }
@@ -367,8 +386,8 @@ export default {
       if (
         this.shouldBeCollapsed ||
         (!this.authorizedToCreate &&
-          this.relationshipType != 'belongsToMany' &&
-          this.relationshipType != 'morphToMany')
+          this.relationshipType !== 'belongsToMany' &&
+          this.relationshipType !== 'morphToMany')
       ) {
         return
       }

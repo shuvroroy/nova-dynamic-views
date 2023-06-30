@@ -1,5 +1,6 @@
 import { mapGetters, mapMutations } from 'vuex'
 import { Inertia } from '@inertiajs/inertia'
+import filled from '../util/filled'
 
 export default {
   created() {
@@ -42,6 +43,7 @@ export default {
     return {
       removeOnNavigationChangesEvent: null,
       removeOnBeforeUnloadEvent: null,
+      navigateBackUsingHistory: true,
     }
   },
 
@@ -62,6 +64,14 @@ export default {
       }
 
       this.preventLeavingForm()
+    },
+
+    enableNavigateBackUsingHistory() {
+      this.navigateBackUsingHistory = false
+    },
+
+    disableNavigateBackUsingHistory() {
+      this.navigateBackUsingHistory = false
     },
 
     handlePreventFormAbandonment(proceed, revert) {
@@ -122,7 +132,7 @@ export default {
 
       this.removeOnBeforeUnloadEvent()
 
-      if (!this.canLeaveFormToPreviousPage) {
+      if (!this.canLeaveFormToPreviousPage && this.navigateBackUsingHistory) {
         window.history.back()
       }
     },
@@ -132,6 +142,16 @@ export default {
       Inertia.ignoreHistoryState = false
 
       this.removeOnBeforeUnloadEvent()
+    },
+
+    proceedToPreviousPage(url) {
+      if (this.navigateBackUsingHistory && window.history.length > 1) {
+        window.history.back()
+      } else if (!this.navigateBackUsingHistory && filled(url)) {
+        Nova.visit(url, { replace: true })
+      } else {
+        Nova.visit('/')
+      }
     },
   },
 

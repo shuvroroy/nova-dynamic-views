@@ -1,7 +1,13 @@
 import filled from '../util/filled'
 
 export default {
+  props: ['field'],
+
   computed: {
+    fieldAttribute() {
+      return this.field.attribute
+    },
+
     fieldHasValue() {
       return filled(this.field.value)
     },

@@ -129,7 +129,7 @@ export default {
                 viaResource: this.viaResource,
                 viaResourceId: this.viaResourceId,
                 viaRelationship: this.viaRelationship,
-                field: this.field.attribute,
+                field: this.fieldAttribute,
                 component: this.field.dependentComponentKey,
               },
               identity
@@ -149,7 +149,7 @@ export default {
               this.syncedField.visible === true
                 ? 'field-shown'
                 : 'field-hidden',
-              this.field.attribute
+              this.fieldAttribute
             )
           }
 
@@ -159,7 +159,16 @@ export default {
             this.setInitialValue()
           }
 
+          let emitChangesEvent = !this.syncedFieldValueHasNotChanged()
+
           this.onSyncedField()
+
+          if (
+            this.syncedField.dependentShouldEmitChangesEvent &&
+            emitChangesEvent
+          ) {
+            this.emitOnSyncedFieldValueChange()
+          }
         })
         .catch(e => {
           if (isCancel(e)) {
@@ -172,6 +181,16 @@ export default {
 
     onSyncedField() {
       //
+    },
+
+    emitOnSyncedFieldValueChange() {
+      this.emitFieldValueChange(this.field.attribute, this.currentField.value)
+    },
+
+    syncedFieldValueHasNotChanged() {
+      const value = this.currentField.value
+
+      return !isNil(value) && value?.toString() === this.value?.toString()
     },
   },
 
@@ -212,7 +231,7 @@ export default {
 
     currentFieldValues() {
       return {
-        [this.field.attribute]: this.value,
+        [this.fieldAttribute]: this.value,
       }
     },
 

@@ -17,8 +17,9 @@
         "vue-loader": "^16.8.3"
     },
     "dependencies": {
-        "form-backend-validation": "^2.3.3",
         "@inertiajs/inertia": "^0.11.0",
+        "form-backend-validation": "^2.3.3",
+        "inflector-js": "^1.0.1",
         "vue": "^3.2.47",
         "vuex": "^4.0.2"
     }

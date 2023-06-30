@@ -31,6 +31,7 @@
           :key="panel.id"
           :is="'form-' + panel.component"
           @update-last-retrieved-at-timestamp="updateLastRetrievedAtTimestamp"
+          @file-deleted="handleFileDeleted"
           @field-changed="onUpdateFormStatus"
           @file-upload-started="handleFileUploadStarted"
           @file-upload-finished="handleFileUploadFinished"
@@ -89,13 +90,12 @@
 import each from 'lodash/each'
 import tap from 'lodash/tap'
 import {
-  Errors,
   HandlesFormRequest,
   HandlesUploads,
   InteractsWithResourceInformation,
   mapProps,
   PreventsFormAbandonment,
-} from './../mixins'
+} from '@/mixins'
 import { mapActions } from 'vuex'
 
 export default {
@@ -105,6 +105,12 @@ export default {
     InteractsWithResourceInformation,
     PreventsFormAbandonment,
   ],
+
+  provide() {
+    return {
+      removeFile: this.removeFile,
+    }
+  },
 
   props: mapProps([
     'resourceName',
@@ -131,8 +137,9 @@ export default {
     // If this update is via a relation index, then let's grab the field
     // and use the label for that as the one we use for the title and buttons
     if (this.isRelation) {
-      const { data } = await Nova.request(
-        `/nova-api/${this.viaResource}/field/${this.viaRelationship}`
+      const { data } = await Nova.request().get(
+        `/nova-api/${this.viaResource}/field/${this.viaRelationship}`,
+        { params: { relatable: true } }
       )
       this.relationResponse = data
     }
@@ -144,6 +151,18 @@ export default {
 
   methods: {
     ...mapActions(['fetchPolicies']),
+
+    handleFileDeleted() {
+      //
+    },
+
+    removeFile(attribute) {
+      const { resourceName, resourceId } = this
+
+      Nova.request().delete(
+        `/nova-api/${resourceName}/${resourceId}/field/${attribute}`
+      )
+    },
 
     /**
      * Handle resource loaded event.
@@ -216,11 +235,11 @@ export default {
       this.handleProceedingToPreviousPage()
       this.allowLeavingForm()
 
-      if (window.history.length > 1) {
-        window.history.back()
-      } else {
-        Nova.visit('/')
-      }
+      this.proceedToPreviousPage(
+        this.isRelation
+          ? `/resources/${this.viaResource}/${this.viaResourceId}`
+          : `/resources/${this.resourceName}/${this.resourceId}`
+      )
     },
 
     /**
@@ -258,10 +277,12 @@ export default {
             } else {
               window.scrollTo(0, 0)
 
+              this.disableNavigateBackUsingHistory()
+
               // Reset the form by refetching the fields
               this.getFields()
 
-              this.validationErrors = new Errors()
+              this.resetErrors()
               this.submittedViaUpdateResource = false
               this.submittedViaUpdateResourceAndContinueEditing = false
               this.isWorking = false

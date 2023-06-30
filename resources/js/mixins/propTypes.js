@@ -1,6 +1,11 @@
 import pick from 'lodash/pick'
 
 const propTypes = {
+  nested: {
+    type: Boolean,
+    default: false,
+  },
+
   preventInitialLoading: {
     type: Boolean,
     default: false,

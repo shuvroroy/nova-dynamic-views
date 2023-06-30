@@ -19,11 +19,11 @@ export default {
       if (this.field) {
         if (typeof this['emitFieldValueChange'] == 'function') {
           this.emitFieldValueChange(
-            this.field.attribute,
+            this.fieldAttribute,
             this.selectedResourceId
           )
         } else {
-          Nova.$emit(this.field.attribute + '-change', this.selectedResourceId)
+          Nova.$emit(this.fieldAttribute + '-change', this.selectedResourceId)
         }
       }
     },
@@ -45,9 +45,9 @@ export default {
 
       if (this.field) {
         if (typeof this['emitFieldValueChange'] == 'function') {
-          this.emitFieldValueChange(this.field.attribute, null)
+          this.emitFieldValueChange(this.fieldAttribute, null)
         } else {
-          Nova.$emit(this.field.attribute + '-change', null)
+          Nova.$emit(this.fieldAttribute + '-change', null)
         }
       }
     },

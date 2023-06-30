@@ -4,7 +4,7 @@ import omitBy from 'lodash/omitBy'
 export default {
   computed: {
     suggestionsId() {
-      return `${this.field.attribute}-list`
+      return `${this.fieldAttribute}-list`
     },
 
     suggestions() {

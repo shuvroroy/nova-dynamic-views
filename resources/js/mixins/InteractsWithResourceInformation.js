@@ -7,7 +7,7 @@ export default {
      */
     resourceInformation() {
       return find(Nova.config('resources'), resource => {
-        return resource.uriKey == this.resourceName
+        return resource.uriKey === this.resourceName
       })
     },
 
@@ -20,7 +20,7 @@ export default {
       }
 
       return find(Nova.config('resources'), resource => {
-        return resource.uriKey == this.viaResource
+        return resource.uriKey === this.viaResource
       })
     },
 

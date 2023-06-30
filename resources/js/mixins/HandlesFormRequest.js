@@ -52,5 +52,12 @@ export default {
         this.handleResponseError(error)
       }
     },
+
+    /**
+     * Reset validation errors.
+     */
+    resetErrors() {
+      this.validationErrors = new Errors()
+    },
   },
 }

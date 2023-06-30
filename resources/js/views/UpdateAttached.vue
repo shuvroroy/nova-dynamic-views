@@ -33,7 +33,7 @@
       :data-form-unique-id="formUniqueId"
       autocomplete="off"
     >
-      <Card class="overflow-hidden mb-8">
+      <Card class="mb-8">
         <!-- Related Resource -->
         <div
           v-if="parentResource"
@@ -147,11 +147,10 @@ import tap from 'lodash/tap'
 import {
   PerformsSearches,
   TogglesTrashed,
-  Errors,
   FormEvents,
   PreventsFormAbandonment,
   HandlesFormRequest,
-} from './../mixins'
+} from '@/mixins'
 import { mapActions } from 'vuex'
 
 export default {
@@ -162,6 +161,12 @@ export default {
     TogglesTrashed,
     PreventsFormAbandonment,
   ],
+
+  provide() {
+    return {
+      removeFile: this.removeFile,
+    }
+  },
 
   props: {
     resourceName: {
@@ -247,6 +252,20 @@ export default {
       this.allowLeavingForm()
     },
 
+    removeFile(attribute) {
+      const {
+        resourceName,
+        resourceId,
+        relatedResourceName,
+        relatedResourceId,
+        viaRelationship,
+      } = this
+
+      const uri = Nova.request().delete(
+        `/nova-api/${resourceName}/${resourceId}/${relatedResourceName}/${relatedResourceId}/field/${attribute}?viaRelationship=${viaRelationship}`
+      )
+    },
+
     /**
      * Handle pivot fields loaded event.
      */
@@ -315,10 +334,6 @@ export default {
       this.fields = fields
 
       this.handlePivotFieldsLoaded()
-    },
-
-    resetErrors() {
-      this.validationErrors = new Errors()
     },
 
     /**
@@ -394,6 +409,8 @@ export default {
 
         window.scrollTo(0, 0)
 
+        this.disableNavigateBackUsingHistory()
+
         this.allowLeavingForm()
 
         this.submittedViaUpdateAndContinueEditing = false
@@ -413,11 +430,9 @@ export default {
       this.handleProceedingToPreviousPage()
       this.allowLeavingForm()
 
-      if (window.history.length > 1) {
-        window.history.back()
-      } else {
-        Nova.visit('/')
-      }
+      this.proceedToPreviousPage(
+        `/resources/${this.resourceName}/${this.resourceId}`
+      )
     },
 
     /**
@@ -467,7 +482,7 @@ export default {
       this.selectInitialResource()
 
       if (this.field) {
-        this.emitFieldValueChange(this.field.attribute, this.selectedResourceId)
+        this.emitFieldValueChange(this.fieldAttribute, this.selectedResourceId)
       }
     },
 

@@ -1,7 +1,6 @@
 import forEach from 'lodash/forEach'
 import { Inertia } from '@inertiajs/inertia'
-import filled from './../util/filled'
-import clone from 'lodash/cloneDeep'
+import filled from '../util/filled'
 
 let compiledSearchParams = null
 
