@@ -146,15 +146,15 @@ If you want to show this button only on a specific resource, for example only fo
 
 All `custom-*-*` nova placeholders are available as camel case methods postfixed with `Components`:
 
-- [x] `customIndexHeaderComponents`
-- [x] `customIndexToolbarComponents`
-- [x] `customDetailHeaderComponents`
-- [x] `customDetailToolbarComponents`
-- [x] `customCreateHeaderComponents`
-- [x] `customAttachHeaderComponents`
-- [x] `customUpdateAttachHeaderComponents`
-- [ ] `customUpdateHeaderComponents`
-- [ ] `customLensHeaderComponents`
+- ✅ `customIndexHeaderComponents`
+- ✅ `customIndexToolbarComponents`
+- ✅ `customDetailHeaderComponents`
+- ✅ `customDetailToolbarComponents`
+- ✅ `customCreateHeaderComponents`
+- ✅ `customAttachHeaderComponents`
+- ✅ `customUpdateAttachHeaderComponents`
+- ❌ `customUpdateHeaderComponents` (Planned)
+- ❌ `customLensHeaderComponents` (Planned)
 
 ## Create custom component
 
