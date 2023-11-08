@@ -153,8 +153,8 @@ All `custom-*-*` nova placeholders are available as camel case methods postfixed
 - ✅ `customCreateHeaderComponents`
 - ✅ `customAttachHeaderComponents`
 - ✅ `customUpdateAttachHeaderComponents`
-- ❌ `customUpdateHeaderComponents` (Planned)
-- ✅ `customLensHeaderComponents` (Planned)
+- ✅ `customUpdateHeaderComponents`
+- ✅ `customLensHeaderComponents`
 
 ## Create custom component
 

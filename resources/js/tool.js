@@ -3,8 +3,8 @@ import ResourceIndex from './views/Index'
 import ResourceDetail from './views/Detail'
 import Attach from './views/Attach'
 import UpdateAttached from './views/UpdateAttached'
+import ResourceUpdate from './views/Update'
 import ResourceLens from './views/Lens'
-// import ResourceUpdate from './views/Update'
 
 const pages = Nova.pages
 
@@ -14,8 +14,8 @@ Nova.booting((app) => {
   app.component('ResourceDetail', ResourceDetail)
   app.component('AttachResource', Attach)
   app.component('UpdateAttachedResource', UpdateAttached)
-    // app.component('Update', ResourceUpdate)
 
+  pages['Nova.Update'].components.ResourceUpdate = ResourceUpdate
   pages['Nova.Lens'].components.ResourceLens = ResourceLens
 
   const components = [
@@ -26,8 +26,8 @@ Nova.booting((app) => {
     'index-header',
     'index-toolbar',
     'update-attach-header',
-    'lens-header'
-    // 'update-header',
+    'update-header',
+    'lens-header',
   ];
 
   components.forEach((component) => {
