@@ -3,7 +3,10 @@ import ResourceIndex from './views/Index'
 import ResourceDetail from './views/Detail'
 import Attach from './views/Attach'
 import UpdateAttached from './views/UpdateAttached'
+import ResourceLens from './views/Lens'
 // import ResourceUpdate from './views/Update'
+
+const pages = Nova.pages
 
 Nova.booting((app) => {
   app.component('CreateForm', CreateForm)
@@ -13,6 +16,8 @@ Nova.booting((app) => {
   app.component('UpdateAttachedResource', UpdateAttached)
     // app.component('Update', ResourceUpdate)
 
+  pages['Nova.Lens'].components.ResourceLens = ResourceLens
+
   const components = [
     'attach-header',
     'create-header',
@@ -21,6 +26,7 @@ Nova.booting((app) => {
     'index-header',
     'index-toolbar',
     'update-attach-header',
+    'lens-header'
     // 'update-header',
   ];
 
