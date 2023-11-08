@@ -35,6 +35,7 @@
           :shown-via-new-relation-modal="shownViaNewRelationModal"
           :panel="panel"
           :name="panel.name"
+          :dusk="`${panel.slug}-panel`"
           :resource-name="resourceName"
           :fields="panel.fields"
           :form-unique-id="formUniqueId"
@@ -49,34 +50,32 @@
 
       <!-- Create Button -->
       <div
-        class="flex flex-col md:flex-row md:items-center justify-center md:justify-end space-y-2 md:space-y-0 space-x-3"
+        class="flex flex-col md:flex-row md:items-center justify-center md:justify-end space-y-2 md:space-y-0 md:space-x-3"
       >
-        <CancelButton
-          tabindex="0"
-          dusk="cancel-create-button"
-          type="button"
+        <Button
           @click="$emit('create-cancelled')"
+          variant="ghost"
+          :label="__('Cancel')"
+          :disabled="isWorking"
+          dusk="cancel-create-button"
         />
 
-        <LoadingButton
+        <Button
           v-if="shouldShowAddAnotherButton"
-          dusk="create-and-add-another-button"
-          type="button"
           @click="submitViaCreateResourceAndAddAnother"
-          :disabled="isWorking"
+          :label="__('Create & Add Another')"
           :loading="wasSubmittedViaCreateResourceAndAddAnother"
-        >
-          {{ __('Create & Add Another') }}
-        </LoadingButton>
+          dusk="create-and-add-another-button"
+        />
 
-        <LoadingButton
-          dusk="create-button"
+        <Button
           type="submit"
+          dusk="create-button"
+          @click="submitViaCreateResource"
+          :label="createButtonLabel"
           :disabled="isWorking"
           :loading="wasSubmittedViaCreateResource"
-        >
-          {{ createButtonLabel }}
-        </LoadingButton>
+        />
       </div>
     </form>
   </LoadingView>
@@ -93,13 +92,19 @@ import {
   mapProps,
 } from '@/mixins'
 import { mapActions, mapMutations } from 'vuex'
+import { Button } from 'laravel-nova-ui'
 
 export default {
+  components: {
+    Button,
+  },
+
   emits: [
     'resource-created',
     'resource-created-and-adding-another',
     'create-cancelled',
     'update-form-status',
+    'finished-loading',
   ],
 
   mixins: [
@@ -190,6 +195,8 @@ export default {
      */
     handleResourceLoaded() {
       this.loading = false
+
+      this.$emit('finished-loading')
 
       Nova.$emit('resource-loaded', {
         resourceName: this.resourceName,

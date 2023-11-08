@@ -20,7 +20,7 @@ export default {
      * Get the current page from the query string.
      */
     currentPage() {
-      return parseInt(this.route.params[this.pageParameter] || 1)
+      return parseInt(this.queryStringParams[this.pageParameter] || 1)
     },
   },
 }

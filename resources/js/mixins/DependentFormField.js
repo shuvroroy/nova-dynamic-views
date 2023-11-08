@@ -8,6 +8,7 @@ import isNil from 'lodash/isNil'
 import pickBy from 'lodash/pickBy'
 import FormField from './FormField'
 import { mapProps } from './propTypes'
+import filled from '../util/filled'
 import { escapeUnicode } from '../util/escapeUnicode'
 
 export default {
@@ -140,6 +141,7 @@ export default {
           }
         )
         .then(response => {
+          let previousValue = this.currentField.value
           let wasVisible = this.currentlyIsVisible
 
           this.syncedField = response.data
@@ -154,7 +156,7 @@ export default {
           }
 
           if (isNil(this.syncedField.value)) {
-            this.syncedField.value = this.field.value
+            this.syncedField.value = previousValue
           } else {
             this.setInitialValue()
           }
@@ -189,6 +191,10 @@ export default {
 
     syncedFieldValueHasNotChanged() {
       const value = this.currentField.value
+
+      if (filled(value)) {
+        return !filled(this.value)
+      }
 
       return !isNil(value) && value?.toString() === this.value?.toString()
     },

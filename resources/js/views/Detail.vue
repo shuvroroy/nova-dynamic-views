@@ -48,7 +48,11 @@
       >
         <div v-if="panel.showToolbar" class="md:flex items-center mb-3">
           <div class="flex flex-auto truncate items-center">
-            <Heading :level="1" v-text="panel.name" />
+            <Heading
+              :level="1"
+              v-text="panel.name"
+              :dusk="`${panel.name}-detail-heading`"
+            />
             <Badge
               v-if="resource.softDeleted"
               :label="__('Soft Deleted')"
@@ -57,7 +61,6 @@
           </div>
 
           <div class="ml-auto flex items-center">
-
             <custom-detail-toolbar
               :resource="resource"
               :resource-name="resourceName"
@@ -89,7 +92,6 @@
               }"
               :href="$url(`/resources/${resourceName}/${resourceId}`)"
               class="rounded hover:bg-gray-200 dark:hover:bg-gray-800 focus:outline-none focus:ring"
-              data-testid="view-resource"
               dusk="view-resource-button"
               tabindex="1"
             >
@@ -108,7 +110,6 @@
               }"
               :href="$url(`/resources/${resourceName}/${resourceId}/edit`)"
               class="rounded hover:bg-gray-200 dark:hover:bg-gray-800 focus:outline-none focus:ring"
-              data-testid="edit-resource"
               dusk="edit-resource-button"
               tabindex="1"
             >

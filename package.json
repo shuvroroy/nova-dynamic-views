@@ -20,6 +20,7 @@
         "@inertiajs/inertia": "^0.11.0",
         "form-backend-validation": "^2.3.3",
         "inflector-js": "^1.0.1",
+        "laravel-nova-ui": "^0.4.0",
         "vue": "^3.2.47",
         "vuex": "^4.0.2"
     }

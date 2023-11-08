@@ -30,12 +30,14 @@ export default {
           callback
             ? callback
             : () => {
-                this.deleteModalOpen = false
                 this.getResources()
               }
         )
         .then(() => {
           Nova.$emit('resources-deleted')
+        })
+        .finally(() => {
+          this.deleteModalOpen = false
         })
     },
 
@@ -63,11 +65,13 @@ export default {
         },
       })
         .then(() => {
-          this.deleteModalOpen = false
           this.getResources()
         })
         .then(() => {
           Nova.$emit('resources-deleted')
+        })
+        .finally(() => {
+          this.deleteModalOpen = false
         })
     },
 
@@ -85,11 +89,13 @@ export default {
         },
       })
         .then(() => {
-          this.deleteModalOpen = false
           this.getResources()
         })
         .then(() => {
           Nova.$emit('resources-detached')
+        })
+        .finally(() => {
+          this.deleteModalOpen = false
         })
     },
 
@@ -106,11 +112,13 @@ export default {
         },
       })
         .then(() => {
-          this.deleteModalOpen = false
           this.getResources()
         })
         .then(() => {
           Nova.$emit('resources-detached')
+        })
+        .finally(() => {
+          this.deleteModalOpen = false
         })
     },
 
@@ -130,13 +138,14 @@ export default {
           callback
             ? callback
             : () => {
-                this.deleteModalOpen = false
-
                 this.getResources()
               }
         )
         .then(() => {
           Nova.$emit('resources-deleted')
+        })
+        .finally(() => {
+          this.deleteModalOpen = false
         })
     },
 
@@ -160,11 +169,13 @@ export default {
         },
       })
         .then(() => {
-          this.deleteModalOpen = false
           this.getResources()
         })
         .then(() => {
           Nova.$emit('resources-deleted')
+        })
+        .finally(() => {
+          this.deleteModalOpen = false
         })
     },
 
@@ -184,13 +195,14 @@ export default {
           callback
             ? callback
             : () => {
-                this.restoreModalOpen = false
-
                 this.getResources()
               }
         )
         .then(() => {
           Nova.$emit('resources-restored')
+        })
+        .finally(() => {
+          this.restoreModalOpen = false
         })
     },
 
@@ -214,11 +226,13 @@ export default {
         },
       })
         .then(() => {
-          this.restoreModalOpen = false
           this.getResources()
         })
         .then(() => {
           Nova.$emit('resources-restored')
+        })
+        .finally(() => {
+          this.restoreModalOpen = false
         })
     },
   },

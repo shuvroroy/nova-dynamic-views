@@ -22,6 +22,17 @@ export default {
     },
 
     /**
+     * Toggle polling for new resources.
+     */
+    togglePolling() {
+      if (this.currentlyPolling) {
+        this.stopPolling()
+      } else {
+        this.startPolling()
+      }
+    },
+
+    /**
      * Pause polling for new resources.
      */
     stopPolling() {
@@ -38,9 +49,12 @@ export default {
      */
     startPolling() {
       this.pollingListener = setInterval(() => {
+        let selectedResources = this.selectedResources ?? []
+
         if (
           document.hasFocus() &&
-          document.querySelectorAll('[data-modal-open]').length < 1
+          document.querySelectorAll('[data-modal-open]').length < 1 &&
+          selectedResources.length < 1
         ) {
           this.getResources()
         }

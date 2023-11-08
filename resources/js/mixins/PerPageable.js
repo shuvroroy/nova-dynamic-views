@@ -22,7 +22,7 @@ export default {
      * Get the current per page value from the query string.
      */
     currentPerPage() {
-      return this.route.params[this.perPageParameter] || 25
+      return this.queryStringParams[this.perPageParameter] || 25
     },
   },
 }

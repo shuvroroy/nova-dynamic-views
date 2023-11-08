@@ -1,14 +1,15 @@
 import debounce from 'lodash/debounce'
 import find from 'lodash/find'
 import includes from 'lodash/includes'
+import isNull from 'lodash/isNull'
 import map from 'lodash/map'
-import { Filterable, RouteParameters, mapProps } from './index'
+import { Filterable, InteractsWithQueryString, mapProps } from './index'
 import { capitalize } from '@/util'
 import { computed } from 'vue'
 import filter from 'lodash/filter'
 
 export default {
-  mixins: [Filterable, RouteParameters],
+  mixins: [Filterable, InteractsWithQueryString],
 
   props: {
     ...mapProps([
@@ -176,7 +177,9 @@ export default {
      * Toggle the selection of all resources
      */
     toggleSelectAll(e) {
-      e.preventDefault()
+      if (e) {
+        e.preventDefault()
+      }
 
       if (this.selectAllChecked) {
         this.clearResourceSelections()
@@ -191,7 +194,9 @@ export default {
      * Toggle the selection of all matching resources in the database
      */
     toggleSelectAllMatching(e) {
-      e.preventDefault()
+      if (e) {
+        e.preventDefault()
+      }
 
       if (!this.selectAllMatchingResources) {
         this.selectAllResources()
@@ -303,7 +308,7 @@ export default {
      */
     initializePerPageFromQueryString() {
       this.perPage =
-        this.route.params[this.perPageParameter] ||
+        this.queryStringParams[this.perPageParameter] ||
         this.initialPerPage ||
         this.resourceInformation?.perPageOptions[0] ||
         null
@@ -324,6 +329,11 @@ export default {
         [this.pageParameter]: 1,
         [this.searchParameter]: this.search,
       })
+    },
+
+    handleActionExecuted() {
+      this.fetchPolicies()
+      this.getResources()
     },
   },
 
@@ -380,35 +390,38 @@ export default {
      * Get the IDs for the selected resources.
      */
     selectedResourceIds() {
-      return map(this.selectedResources, resource => resource.id.value)
+      return map(
+        this.selectedResources,
+        resource => resource.id.pivotValue ?? resource.id.value
+      )
     },
 
     /**
      * Get the current search value from the query string.
      */
     currentSearch() {
-      return this.route.params[this.searchParameter] || ''
+      return this.queryStringParams[this.searchParameter] || ''
     },
 
     /**
      * Get the current order by value from the query string.
      */
     currentOrderBy() {
-      return this.route.params[this.orderByParameter] || ''
+      return this.queryStringParams[this.orderByParameter] || ''
     },
 
     /**
      * Get the current order by direction from the query string.
      */
     currentOrderByDirection() {
-      return this.route.params[this.orderByDirectionParameter] || null
+      return this.queryStringParams[this.orderByDirectionParameter] || null
     },
 
     /**
      * Get the current trashed constraint value from the query string.
      */
     currentTrashed() {
-      return this.route.params[this.trashedParameter] || ''
+      return this.queryStringParams[this.trashedParameter] || ''
     },
 
     /**
@@ -419,32 +432,6 @@ export default {
         this.relationshipType == 'belongsToMany' ||
         this.relationshipType == 'morphToMany'
       )
-    },
-
-    /**
-     * Determine if the resource / relationship is "full".
-     */
-    resourceIsFull() {
-      return (
-        (Boolean(this.viaHasOne) && this.resources.length > 0) ||
-        Boolean(this.viaHasOneThrough && this.resources.length > 0)
-      )
-    },
-
-    /**
-     * Determine if the current resource listing is via a has-one relationship.
-     */
-    viaHasOne() {
-      return (
-        this.relationshipType == 'hasOne' || this.relationshipType == 'morphOne'
-      )
-    },
-
-    /**
-     * Determine if the resource is shown via a HasOneThrough relationship.
-     */
-    viaHasOneThrough() {
-      return this.relationshipType == 'hasOneThrough'
     },
 
     /**
@@ -494,7 +481,7 @@ export default {
      */
     shouldShowCheckBoxes() {
       return (
-        Boolean(this.hasResources && !this.viaHasOne) &&
+        Boolean(this.hasResources) &&
         Boolean(
           this.resourceHasActions ||
             this.authorizedToDeleteAnyResources ||
@@ -605,7 +592,7 @@ export default {
      * Return the initial encoded filters from the query string
      */
     initialEncodedFilters() {
-      return this.route.params[this.filterParameter] || ''
+      return this.queryStringParams[this.filterParameter] || ''
     },
 
     /**

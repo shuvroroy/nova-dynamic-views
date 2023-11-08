@@ -24,6 +24,7 @@
       :level="1"
       class="mb-3 flex items-center"
       :class="{ 'mt-6': shouldShowCards && cards.length > 0 }"
+      dusk="index-heading"
     >
       <span v-html="headingTitle" />
       <button
@@ -38,60 +39,49 @@
     </Heading>
 
     <template v-if="!shouldBeCollapsed">
-      <div class="flex mb-6">
+      <div class="flex gap-2 mb-6">
         <IndexSearchInput
-          v-if="
-            resourceInformation && resourceInformation.searchable && !viaHasOne
-          "
-          :searchable="
-            resourceInformation && resourceInformation.searchable && !viaHasOne
-          "
+          v-if="resourceInformation && resourceInformation.searchable"
+          :searchable="resourceInformation && resourceInformation.searchable"
           v-model:keyword="search"
           @update:keyword="search = $event"
         />
 
-        <div class="flex w-full justify-end">
-          <custom-index-toolbar
-            v-if="!viaResource"
+        <div
+          v-if="
+            availableStandaloneActions.length > 0 ||
+            authorizedToCreate ||
+            authorizedToRelate
+          "
+          class="inline-flex items-center gap-2 ml-auto"
+        >
+          <!-- Action Dropdown -->
+          <ActionDropdown
+            v-if="availableStandaloneActions.length > 0"
+            @actionExecuted="handleActionExecuted"
             :resource-name="resourceName"
+            :via-resource="viaResource"
+            :via-resource-id="viaResourceId"
+            :via-relationship="viaRelationship"
+            :relationship-type="relationshipType"
+            :actions="availableStandaloneActions"
+            :selected-resources="selectedResourcesForActionSelector"
+            trigger-dusk-attribute="index-standalone-action-dropdown"
           />
 
-          <div
-            v-if="
-              availableStandaloneActions.length > 0 ||
-              authorizedToCreate ||
-              authorizedToRelate
-            "
-            class="inline-flex items-center space-x-2 flex-shrink-0"
-          >
-            <!-- Action Dropdown -->
-            <ActionDropdown
-              v-if="availableStandaloneActions.length > 0"
-              @actionExecuted="() => fetchPolicies()"
-              :resource-name="resourceName"
-              :via-resource="viaResource"
-              :via-resource-id="viaResourceId"
-              :via-relationship="viaRelationship"
-              :relationship-type="relationshipType"
-              :actions="availableStandaloneActions"
-              :selected-resources="selectedResourcesForActionSelector"
-              trigger-dusk-attribute="index-standalone-action-dropdown"
-            />
-
-            <!-- Create / Attach Button -->
-            <CreateResourceButton
-              :label="createButtonLabel"
-              :singular-name="singularName"
-              :resource-name="resourceName"
-              :via-resource="viaResource"
-              :via-resource-id="viaResourceId"
-              :via-relationship="viaRelationship"
-              :relationship-type="relationshipType"
-              :authorized-to-create="authorizedToCreate && !resourceIsFull"
-              :authorized-to-relate="authorizedToRelate"
-              class="flex-shrink-0"
-            />
-          </div>
+          <!-- Create / Attach Button -->
+          <CreateResourceButton
+            :label="createButtonLabel"
+            :singular-name="singularName"
+            :resource-name="resourceName"
+            :via-resource="viaResource"
+            :via-resource-id="viaResourceId"
+            :via-relationship="viaRelationship"
+            :relationship-type="relationshipType"
+            :authorized-to-create="authorizedToCreate"
+            :authorized-to-relate="authorizedToRelate"
+            class="shrink-0"
+          />
         </div>
       </div>
 
@@ -127,6 +117,7 @@
           :has-filters="hasFilters"
           :have-standalone-actions="haveStandaloneActions"
           :lenses="lenses"
+          :loading="resourceResponse && loading"
           :per-page-options="perPageOptions"
           :per-page="perPage"
           :pivot-actions="pivotActions"
@@ -151,16 +142,19 @@
           @stop-polling="stopPolling"
           :toggle-select-all-matching="toggleSelectAllMatching"
           :toggle-select-all="toggleSelectAll"
+          :toggle-polling="togglePolling"
           :trashed-changed="trashedChanged"
           :trashed-parameter="trashedParameter"
           :trashed="trashed"
           :update-per-page-changed="updatePerPageChanged"
-          :via-has-one="viaHasOne"
           :via-many-to-many="viaManyToMany"
           :via-resource="viaResource"
         />
 
-        <LoadingView :loading="loading">
+        <LoadingView
+          :loading="loading"
+          :variant="!resourceResponse ? 'default' : 'overlay'"
+        >
           <IndexErrorDialog
             v-if="resourceResponseError != null"
             :resource="resourceInformation"
@@ -169,7 +163,7 @@
 
           <template v-else>
             <IndexEmptyDialog
-              v-if="!resources.length"
+              v-if="!loading && !resources.length"
               :create-button-label="createButtonLabel"
               :singular-name="singularName"
               :resource-name="resourceName"
@@ -200,7 +194,7 @@
               @reset-order-by="resetOrderBy"
               @delete="deleteResources"
               @restore="restoreResources"
-              @actionExecuted="getResources"
+              @actionExecuted="handleActionExecuted"
               ref="resourceTable"
             />
 

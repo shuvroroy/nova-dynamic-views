@@ -52,35 +52,31 @@
 
       <!-- Update Button -->
       <div
-        class="flex flex-col md:flex-row md:items-center justify-center md:justify-end space-y-2 md:space-y-0 space-x-3"
+        class="flex flex-col md:flex-row md:items-center justify-center md:justify-end space-y-2 md:space-y-0 md:space-x-3"
       >
-        <CancelButton
+        <Button
           dusk="cancel-update-button"
-          type="button"
-          align="center"
+          variant="ghost"
+          :label="__('Cancel')"
           @click="cancelUpdatingResource"
+          :disabled="isWorking"
         />
 
-        <LoadingButton
+        <Button
           dusk="update-and-continue-editing-button"
-          type="button"
           @click="submitViaUpdateResourceAndContinueEditing"
           :disabled="isWorking"
-          align="center"
-          :processing="wasSubmittedViaUpdateResourceAndContinueEditing"
-        >
-          {{ __('Update & Continue Editing') }}
-        </LoadingButton>
+          :loading="wasSubmittedViaUpdateResourceAndContinueEditing"
+          :label="__('Update & Continue Editing')"
+        />
 
-        <LoadingButton
+        <Button
           dusk="update-button"
           type="submit"
           :disabled="isWorking"
-          align="center"
-          :processing="wasSubmittedViaUpdateResource"
-        >
-          {{ updateButtonLabel }}
-        </LoadingButton>
+          :loading="wasSubmittedViaUpdateResource"
+          :label="updateButtonLabel"
+        />
       </div>
     </form>
   </LoadingView>
@@ -98,7 +94,13 @@ import {
 } from '@/mixins'
 import { mapActions } from 'vuex'
 
+import { Button } from 'laravel-nova-ui'
+
 export default {
+  components: {
+    Button,
+  },
+
   mixins: [
     HandlesFormRequest,
     HandlesUploads,

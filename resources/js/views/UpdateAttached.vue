@@ -68,7 +68,6 @@
                   field.attribute
                 ),
               }"
-              :data-testid="`${field.resourceName}-select`"
               v-model:selected="selectedResourceId"
               @change="selectResourceFromSelectControl"
               disabled
@@ -106,34 +105,35 @@
       <div
         class="flex flex-col mt-3 md:mt-6 md:flex-row items-center justify-center md:justify-end"
       >
-        <CancelButton
+        <Button
           dusk="cancel-update-attached-button"
-          type="button"
           @click="cancelUpdatingAttachedResource"
+          :label="__('Cancel')"
+          variant="ghost"
         />
 
-        <LoadingButton
+        <Button
           class="mr-3"
           dusk="update-and-continue-editing-button"
           @click.prevent="updateAndContinueEditing"
           :disabled="isWorking"
-          :processing="submittedViaUpdateAndContinueEditing"
+          :loading="submittedViaUpdateAndContinueEditing"
         >
           {{ __('Update & Continue Editing') }}
-        </LoadingButton>
+        </Button>
 
-        <LoadingButton
+        <Button
           dusk="update-button"
           type="submit"
           :disabled="isWorking"
-          :processing="submittedViaUpdateAttachedResource"
+          :loading="submittedViaUpdateAttachedResource"
         >
           {{
             __('Update :resource', {
               resource: relatedResourceLabel,
             })
           }}
-        </LoadingButton>
+        </Button>
       </div>
     </form>
   </LoadingView>
@@ -152,8 +152,13 @@ import {
   HandlesFormRequest,
 } from '@/mixins'
 import { mapActions } from 'vuex'
+import { Button } from 'laravel-nova-ui'
 
 export default {
+  components: {
+    Button,
+  },
+
   mixins: [
     FormEvents,
     HandlesFormRequest,

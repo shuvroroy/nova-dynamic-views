@@ -21,11 +21,11 @@ export default {
         return
       }
 
-      const answer = window.confirm(
-        this.__('Do you really want to leave? You have unsaved changes.')
-      )
-
-      if (answer) {
+      if (
+        window.confirm(
+          this.__('Do you really want to leave? You have unsaved changes.')
+        )
+      ) {
         this.allowLeavingModal()
         proceed()
         return

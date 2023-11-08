@@ -1,10 +1,10 @@
 import get from 'lodash/get'
-import isNil from 'lodash/isNil'
 import { mapProps } from './propTypes'
 import FormEvents from './FormEvents'
 
 export default {
   extends: FormEvents,
+
   props: {
     ...mapProps([
       'nested',
@@ -20,7 +20,13 @@ export default {
     ]),
   },
 
-  data: () => ({ value: '' }),
+  emits: ['field-changed'],
+
+  data() {
+    return {
+      value: this.fieldDefaultValue(),
+    }
+  },
 
   created() {
     this.setInitialValue()
@@ -47,7 +53,14 @@ export default {
         this.field.value === undefined || this.field.value === null
       )
         ? this.field.value
-        : ''
+        : this.fieldDefaultValue()
+    },
+
+    /**
+     * Return the field default value.
+     */
+    fieldDefaultValue() {
+      return ''
     },
 
     /**
@@ -75,6 +88,7 @@ export default {
 
       if (this.field) {
         this.emitFieldValueChange(this.fieldAttribute, this.value)
+        this.$emit('field-changed')
       }
     },
 
@@ -92,7 +106,7 @@ export default {
 
   computed: {
     /**
-     * Determine the current field
+     * Determine the current field.
      */
     currentField() {
       return this.field
