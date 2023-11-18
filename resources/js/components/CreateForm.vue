@@ -35,7 +35,7 @@
           :shown-via-new-relation-modal="shownViaNewRelationModal"
           :panel="panel"
           :name="panel.name"
-          :dusk="`${panel.slug}-panel`"
+          :dusk="`${panel.attribute}-panel`"
           :resource-name="resourceName"
           :fields="panel.fields"
           :form-unique-id="formUniqueId"

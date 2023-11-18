@@ -134,7 +134,7 @@
             selectedResourcesForActionSelector
           "
           :should-show-action-selector="shouldShowActionSelector"
-          :should-show-check-boxes="shouldShowCheckBoxes"
+          :should-show-check-boxes="shouldShowCheckboxes"
           :should-show-delete-menu="shouldShowDeleteMenu"
           :should-show-polling-toggle="shouldShowPollingToggle"
           :soft-deletes="softDeletes"
@@ -183,7 +183,7 @@
               :selected-resources="selectedResources"
               :selected-resource-ids="selectedResourceIds"
               :actions-are-available="allActions.length > 0"
-              :should-show-checkboxes="shouldShowCheckBoxes"
+              :should-show-checkboxes="shouldShowCheckboxes"
               :via-resource="viaResource"
               :via-resource-id="viaResourceId"
               :via-relationship="viaRelationship"

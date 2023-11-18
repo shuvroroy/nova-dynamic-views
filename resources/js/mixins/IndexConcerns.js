@@ -479,7 +479,7 @@ export default {
     /**
      * Determine whether to show the selection checkboxes for resources
      */
-    shouldShowCheckBoxes() {
+    shouldShowCheckboxes() {
       return (
         Boolean(this.hasResources) &&
         Boolean(
