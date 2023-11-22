@@ -100,7 +100,7 @@
           selectedResourcesForActionSelector
         "
         :should-show-action-selector="shouldShowActionSelector"
-        :should-show-check-boxes="shouldShowCheckBoxes"
+        :should-show-checkboxes="shouldShowCheckboxes"
         :should-show-delete-menu="shouldShowDeleteMenu"
         :should-show-polling-toggle="shouldShowPollingToggle"
         :soft-deletes="softDeletes"
