@@ -447,7 +447,12 @@ export default {
             viaRelationship: this.viaRelationship,
             relationshipType: this.relationshipType,
             display: 'index',
-            resources: this.selectedResourcesForActionSelector,
+            resources: this.selectAllMatchingChecked
+              ? 'all'
+              : this.selectedResourceIds,
+            pivots: !this.selectAllMatchingChecked
+              ? this.selectedPivotIds
+              : null,
           },
           cancelToken: new CancelToken(canceller => {
             this.actionCanceller = canceller

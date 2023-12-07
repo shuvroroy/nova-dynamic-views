@@ -150,7 +150,7 @@
             :selected-resource-ids="selectedResourceIds"
             :actions-are-available="allActions.length > 0"
             :actions-endpoint="lensActionEndpoint"
-            :should-show-checkboxes="shouldShowCheckBoxes"
+            :should-show-checkboxes="shouldShowCheckboxes"
             :via-resource="viaResource"
             :via-resource-id="viaResourceId"
             :via-relationship="viaRelationship"
@@ -316,7 +316,9 @@ export default {
             viaRelationship: this.viaRelationship,
             relationshipType: this.relationshipType,
             display: 'index',
-            resources: this.selectedResourcesForActionSelector,
+            resources: this.selectAllMatchingChecked
+              ? 'all'
+              : this.selectedResourceIds,
           },
           cancelToken: new CancelToken(canceller => {
             this.actionCanceller = canceller

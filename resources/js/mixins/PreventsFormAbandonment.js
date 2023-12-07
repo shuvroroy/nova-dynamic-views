@@ -59,7 +59,7 @@ export default {
      * Prevent accidental abandonment only if form was changed.
      */
     updateFormStatus() {
-      if (this.canLeaveForm == true) {
+      if (this.canLeaveForm === true) {
         this.triggerPushState()
       }
 

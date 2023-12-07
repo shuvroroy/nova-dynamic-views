@@ -390,9 +390,16 @@ export default {
      * Get the IDs for the selected resources.
      */
     selectedResourceIds() {
+      return map(this.selectedResources, resource => resource.id.value)
+    },
+
+    /**
+     * Get the Pivot IDs for the selected resources.
+     */
+    selectedPivotIds() {
       return map(
         this.selectedResources,
-        resource => resource.id.pivotValue ?? resource.id.value
+        resource => resource.id.pivotValue ?? null
       )
     },
 
@@ -822,7 +829,7 @@ export default {
      * Get the selected resources for the action selector.
      */
     selectedResourcesForActionSelector() {
-      return this.selectAllMatchingChecked ? 'all' : this.selectedResourceIds
+      return this.selectAllMatchingChecked ? 'all' : this.selectedResources
     },
   },
 }
