@@ -148,7 +148,7 @@
             :singular-name="singularName"
             :selected-resources="selectedResources"
             :selected-resource-ids="selectedResourceIds"
-            :actions-are-available="allActions.length > 0"
+            :actions-are-available="actionsAreAvailable"
             :actions-endpoint="lensActionEndpoint"
             :should-show-checkboxes="shouldShowCheckboxes"
             :via-resource="viaResource"
@@ -228,7 +228,7 @@ export default {
 
   data: () => ({
     actionCanceller: null,
-    hasId: false,
+    resourceHasId: false,
   }),
 
   /**
@@ -282,7 +282,7 @@ export default {
             this.resources = data.resources
             this.softDeletes = data.softDeletes
             this.perPage = data.per_page
-            this.hasId = data.hasId
+            this.resourceHasId = data.hasId
 
             this.handleResourcesLoaded()
           })
@@ -402,6 +402,10 @@ export default {
       }
     },
 
+    actionsAreAvailable() {
+      return this.allActions.length > 0 && Boolean(this.resourceHasId)
+    },
+
     /**
      * Get the endpoint for this resource's actions.
      */
@@ -421,7 +425,7 @@ export default {
      */
     canShowDeleteMenu() {
       return (
-        this.hasId &&
+        Boolean(this.resourceHasId) &&
         Boolean(
           this.authorizedToDeleteSelectedResources ||
             this.authorizedToForceDeleteSelectedResources ||

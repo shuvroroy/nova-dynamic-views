@@ -64,7 +64,7 @@
               class="w-full"
               dusk="attachable-select"
               :class="{
-                'form-input-border-error': validationErrors.has(
+                'form-control-bordered-error': validationErrors.has(
                   field.attribute
                 ),
               }"

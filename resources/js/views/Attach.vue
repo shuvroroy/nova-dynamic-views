@@ -118,7 +118,7 @@
                 v-else
                 class="w-full"
                 :class="{
-                  'form-input-border-error': validationErrors.has(
+                  'form-control-bordered-error': validationErrors.has(
                     field.attribute
                   ),
                 }"
