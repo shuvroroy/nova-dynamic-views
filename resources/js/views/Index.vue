@@ -55,6 +55,11 @@
           "
           class="inline-flex items-center gap-2 ml-auto"
         >
+          <custom-index-toolbar
+            v-if="!viaResource"
+            :resource-name="resourceName"
+          />
+
           <!-- Action Dropdown -->
           <ActionDropdown
             v-if="availableStandaloneActions.length > 0"
@@ -288,6 +293,7 @@ export default {
     this.getLenses()
 
     Nova.$on('refresh-resources', this.getResources)
+    Nova.$on('resources-detached', this.getAuthorizationToRelate)
 
     if (this.actionCanceller !== null) this.actionCanceller()
   },

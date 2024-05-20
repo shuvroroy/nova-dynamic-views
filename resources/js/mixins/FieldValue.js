@@ -21,7 +21,7 @@ export default {
         return null
       }
 
-      return String(this.field.displayedAs || this.field.value)
+      return String(this.field.displayedAs ?? this.field.value)
     },
 
     shouldDisplayAsHtml() {

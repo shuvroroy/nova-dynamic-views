@@ -27,6 +27,7 @@ export default {
 
   provide() {
     return {
+      resourceHasId: computed(() => this.resourceHasId),
       authorizedToViewAnyResources: computed(
         () => this.authorizedToViewAnyResources
       ),
@@ -66,6 +67,7 @@ export default {
     orderBy: '',
     orderByDirection: '',
     pivotActions: null,
+    resourceHasId: true,
     resourceHasActions: false,
     resourceResponse: null,
     resourceResponseError: null,
@@ -489,6 +491,7 @@ export default {
     shouldShowCheckboxes() {
       return (
         Boolean(this.hasResources) &&
+        Boolean(this.resourceHasId) &&
         Boolean(
           this.resourceHasActions ||
             this.authorizedToDeleteAnyResources ||
@@ -533,6 +536,7 @@ export default {
     authorizedToViewAnyResources() {
       return (
         this.resources.length > 0 &&
+        Boolean(this.resourceHasId) &&
         Boolean(find(this.resources, resource => resource.authorizedToView))
       )
     },
@@ -543,6 +547,7 @@ export default {
     authorizedToUpdateAnyResources() {
       return (
         this.resources.length > 0 &&
+        Boolean(this.resourceHasId) &&
         Boolean(find(this.resources, resource => resource.authorizedToUpdate))
       )
     },
@@ -553,6 +558,7 @@ export default {
     authorizedToDeleteAnyResources() {
       return (
         this.resources.length > 0 &&
+        Boolean(this.resourceHasId) &&
         Boolean(find(this.resources, resource => resource.authorizedToDelete))
       )
     },
@@ -563,6 +569,7 @@ export default {
     authorizedToForceDeleteAnyResources() {
       return (
         this.resources.length > 0 &&
+        Boolean(this.resourceHasId) &&
         Boolean(
           find(this.resources, resource => resource.authorizedToForceDelete)
         )
@@ -573,8 +580,11 @@ export default {
      * Determine if any selected resources may be restored.
      */
     authorizedToRestoreSelectedResources() {
-      return Boolean(
-        find(this.selectedResources, resource => resource.authorizedToRestore)
+      return (
+        Boolean(this.resourceHasId) &&
+        Boolean(
+          find(this.selectedResources, resource => resource.authorizedToRestore)
+        )
       )
     },
 
@@ -584,6 +594,7 @@ export default {
     authorizedToRestoreAnyResources() {
       return (
         this.resources.length > 0 &&
+        Boolean(this.resourceHasId) &&
         Boolean(find(this.resources, resource => resource.authorizedToRestore))
       )
     },

@@ -8,7 +8,7 @@ export default {
   inject: { index: { default: null }, viaParent: { default: null } },
 
   data: () => ({
-    errorClass: 'form-input-border-error',
+    errorClass: 'form-control-bordered-error',
   }),
 
   computed: {
