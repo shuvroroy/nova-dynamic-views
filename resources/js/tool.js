@@ -48,8 +48,26 @@ Nova.booting((app) => {
 
       mounted() {
         let url = '/nova-vendor/nova-dynamic-views/' + this.resourceName + '/' + this.componentName;
+
+        let queryParams = {};
+
+        if (Nova.$router.page.props && Nova.$router.page.props.viaRelationship) {
+          queryParams.viaRelationship = Nova.$router.page.props.viaRelationship;
+        }
+        if (Nova.$router.page.props && Nova.$router.page.props.viaResource) {
+          queryParams.viaResource = Nova.$router.page.props.viaResource;
+        }
+        if (Nova.$router.page.props && Nova.$router.page.props.viaResourceId) {
+          queryParams.viaResourceId = Nova.$router.page.props.viaResourceId;
+        }
         if (Nova.$router.page.props && Nova.$router.page.props.resourceId) {
-          url += '?id=' + Nova.$router.page.props.resourceId
+          queryParams.id = Nova.$router.page.props.resourceId;
+        }
+
+        let queryString = new URLSearchParams(queryParams).toString();
+
+        if (queryString) {
+          url += '?' + queryString;
         }
 
         Nova.request().get(url)
