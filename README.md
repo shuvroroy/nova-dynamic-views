@@ -9,10 +9,6 @@ This package will help to add some custom placeholder components like `custom-in
 
 ![screenshot](https://user-images.githubusercontent.com/21066418/235350026-dd4a649f-01f2-4057-a6e6-9e147ec76fb6.png)
 
-## Support For This Project
-
-<a href="https://www.buymeacoffee.com/shuvroroy" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
-
 ## Requirements
 
 * PHP (^8.1 or higher)
