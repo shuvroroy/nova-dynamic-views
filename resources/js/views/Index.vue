@@ -12,6 +12,9 @@
       v-if="!viaResource"
       class="mb-3"
       :resource-name="resourceName"
+      :via-resource="viaResource"
+      :via-resource-id="viaResourceId"
+      :via-relationship="viaRelationship"
     />
 
     <Cards
@@ -46,17 +49,13 @@
           v-model="search"
         />
 
-        <div
-          v-if="
-            availableStandaloneActions.length > 0 ||
-            authorizedToCreate ||
-            authorizedToRelate
-          "
-          class="inline-flex items-center gap-2 ml-auto"
-        >
+        <div class="inline-flex items-center gap-2 ml-auto">
           <custom-index-toolbar
             v-if="!viaResource"
             :resource-name="resourceName"
+            :via-resource="viaResource"
+            :via-resource-id="viaResourceId"
+            :via-relationship="viaRelationship"
           />
 
           <!-- Action Dropdown -->
@@ -75,6 +74,7 @@
 
           <!-- Create / Attach Button -->
           <CreateResourceButton
+            v-if="authorizedToCreate || authorizedToRelate"
             :label="createButtonLabel"
             :singular-name="singularName"
             :resource-name="resourceName"
