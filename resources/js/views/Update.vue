@@ -15,6 +15,9 @@
       class="mb-3"
       :resource-name="resourceName"
       :resource-id="resourceId"
+      :via-resource="viaResource"
+      :via-resource-id="viaResourceId"
+      :via-relationship="viaRelationship"
     />
 
     <form
