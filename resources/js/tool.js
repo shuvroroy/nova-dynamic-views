@@ -72,7 +72,6 @@ Nova.booting((app) => {
         }
 
         if (this.resourceId) {
-          console.log(this.resourceId)
           queryParams.id = this.resourceId
         }
 
