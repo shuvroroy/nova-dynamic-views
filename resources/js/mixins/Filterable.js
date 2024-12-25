@@ -15,7 +15,9 @@ export default {
 
   methods: {
     /**
-     * Clear filters and reset the resource table
+     * Clear filters and reset the resource table.
+     *
+     * @param {string|null} lens
      */
     async clearSelectedFilters(lens) {
       if (lens) {
@@ -29,7 +31,7 @@ export default {
         })
       }
 
-      this.updateQueryString({
+      this.pushAfterUpdatingQueryString({
         [this.pageParameter]: 1,
         [this.filterParameter]: '',
       })
@@ -46,7 +48,7 @@ export default {
 
       if (filtersAreApplied || this.filterIsActive) {
         this.filterIsActive = true
-        this.updateQueryString({
+        this.pushAfterUpdatingQueryString({
           [this.pageParameter]: 1,
           [this.filterParameter]: this.encodedFilters,
         })
@@ -54,7 +56,9 @@ export default {
     },
 
     /**
-     * Set up filters for the current view
+     * Set up filters for the current view.
+     *
+     * @param {string|null} lens
      */
     async initializeFilters(lens) {
       if (this.filterHasLoaded === true) {
@@ -85,7 +89,9 @@ export default {
     },
 
     /**
-     * Initialize the filter state
+     * Initialize the filter state.
+     *
+     * @param {string|null} lens
      */
     async initializeState(lens) {
       this.initialEncodedFilters
@@ -103,11 +109,18 @@ export default {
   computed: {
     /**
      * Get the name of the filter query string variable.
+     *
+     * @param {string}
      */
     filterParameter() {
-      return this.resourceName + '_filter'
+      return `${this.resourceName}_filter`
     },
 
+    /**
+     * Return the currently encoded filter string from the store.
+     *
+     * @param {string}
+     */
     encodedFilters() {
       return this.$store.getters[`${this.resourceName}/currentEncodedFilters`]
     },

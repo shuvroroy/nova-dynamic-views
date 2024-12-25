@@ -75,16 +75,24 @@ export default {
   },
 
   computed: {
+    /**
+     * @returns {boolean}
+     */
     initiallyPolling() {
       return this.resourceResponse.polling
     },
 
+    /**
+     * @returns {number}
+     */
     pollingInterval() {
       return this.resourceResponse.pollingInterval
     },
 
     /**
      * Determine if the polling toggle button should be shown.
+     *
+     * @returns {boolean}
      */
     shouldShowPollingToggle() {
       if (!this.resourceResponse) return false

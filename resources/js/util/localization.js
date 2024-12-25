@@ -1,11 +1,15 @@
-import forEach from 'lodash/forEach'
-
+/**
+ * @param {string} key
+ * @param {string} replace
+ * @returns {string}
+ */
 export default function __(key, replace) {
+  /** @type {string} */
   let translation = Nova.config('translations')[key]
     ? Nova.config('translations')[key]
     : key
 
-  forEach(replace, (value, key) => {
+  Object.entries(replace ?? {}).forEach(([key, value]) => {
     key = new String(key)
 
     if (value === null) {

@@ -1,3 +1,7 @@
+/**
+ * @param {string} locale
+ * @returns {number}
+ */
 export default function (locale) {
   let hourCycle = Intl.DateTimeFormat(locale, {
     hour: 'numeric',

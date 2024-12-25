@@ -1,28 +1,18 @@
-import { Inertia } from '@inertiajs/inertia'
-import { InertiaProgress } from '@inertiajs/progress'
+import { router } from '@inertiajs/vue3'
 import debounce from 'lodash/debounce'
 
-export function setupInertia() {
-  InertiaProgress.init({
-    delay: 250,
-    includeCSS: false,
-    showSpinner: false,
+export function setupInertia(app, store) {
+  document.addEventListener('inertia:before', () => {
+    ;(async () => {
+      app.debug('Syncing Inertia props to the store via `inertia:before`...')
+      await store.dispatch('assignPropsFromInertia')
+    })()
   })
 
-  const handlePopstateEvent = function (event) {
-    if (this.ignoreHistoryState === false) {
-      this.handlePopstateEvent(event)
-    }
-  }
-
-  Inertia.ignoreHistoryState = false
-
-  Inertia.setupEventListeners = function () {
-    window.addEventListener('popstate', handlePopstateEvent.bind(Inertia))
-    document.addEventListener(
-      'scroll',
-      debounce(Inertia.handleScrollEvent.bind(Inertia), 100),
-      true
-    )
-  }
+  document.addEventListener('inertia:navigate', () => {
+    ;(async () => {
+      app.debug('Syncing Inertia props to the store via `inertia:navigate`...')
+      await store.dispatch('assignPropsFromInertia')
+    })()
+  })
 }

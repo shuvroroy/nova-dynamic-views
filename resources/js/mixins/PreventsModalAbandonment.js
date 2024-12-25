@@ -15,6 +15,10 @@ export default {
       this.preventLeavingModal()
     },
 
+    /**
+     * @param {Function} proceed
+     * @param {Function} revert
+     */
     handlePreventModalAbandonment(proceed, revert) {
       if (this.canLeaveModal) {
         proceed()

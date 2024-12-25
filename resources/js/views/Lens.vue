@@ -29,8 +29,7 @@
       <IndexSearchInput
         v-if="searchable"
         :searchable="searchable"
-        v-model:keyword="search"
-        @update:keyword="search = $event"
+        v-model="search"
       />
 
       <!-- Action Dropdown -->
@@ -94,13 +93,13 @@
         :current-page-count="resources.length"
         :select-all-checked="selectAllChecked"
         :select-all-matching-checked="selectAllMatchingResources"
-        @deselect="clearResourceSelections"
+        @deselect="deselectAllResources"
         :selected-resources="selectedResources"
         :selected-resources-for-action-selector="
           selectedResourcesForActionSelector
         "
         :should-show-action-selector="shouldShowActionSelector"
-        :should-show-checkboxes="shouldShowCheckboxes"
+        :should-show-checkboxes="shouldShowSelectAllCheckboxes"
         :should-show-delete-menu="shouldShowDeleteMenu"
         :should-show-polling-toggle="shouldShowPollingToggle"
         :soft-deletes="softDeletes"
@@ -282,7 +281,7 @@ export default {
             this.resources = data.resources
             this.softDeletes = data.softDeletes
             this.perPage = data.per_page
-            this.resourceHasId = data.hasId
+            this.resourceHasId = Boolean(data.hasId)
 
             this.handleResourcesLoaded()
           })
@@ -327,6 +326,7 @@ export default {
         .then(response => {
           this.actions = response.data.actions
           this.pivotActions = response.data.pivotActions
+          this.resourceHasSoleActions = response.data.counts.sole > 0
           this.resourceHasActions = response.data.counts.resource > 0
         })
         .catch(e => {
@@ -403,7 +403,7 @@ export default {
     },
 
     actionsAreAvailable() {
-      return this.allActions.length > 0 && Boolean(this.resourceHasId)
+      return this.allActions.length > 0 && this.resourceHasId
     },
 
     /**
@@ -425,7 +425,7 @@ export default {
      */
     canShowDeleteMenu() {
       return (
-        Boolean(this.resourceHasId) &&
+        this.resourceHasId &&
         Boolean(
           this.authorizedToDeleteSelectedResources ||
             this.authorizedToForceDeleteSelectedResources ||
