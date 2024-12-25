@@ -15,6 +15,9 @@
       class="mb-3"
       :resource-name="resourceName"
       :resource-id="resourceId"
+      :via-resource="viaResource"
+      :via-resource-id="viaResourceId"
+      :via-relationship="viaRelationship"
     />
 
     <form
@@ -83,8 +86,7 @@
 </template>
 
 <script>
-import each from 'lodash/each'
-import tap from 'lodash/tap'
+import { Button } from 'laravel-nova-ui'
 import {
   HandlesFormRequest,
   HandlesUploads,
@@ -93,8 +95,7 @@ import {
   PreventsFormAbandonment,
 } from '@/mixins'
 import { mapActions } from 'vuex'
-
-import { Button } from 'laravel-nova-ui'
+import tap from 'lodash/tap'
 
 export default {
   components: {
@@ -148,7 +149,6 @@ export default {
 
     this.getFields()
     this.updateLastRetrievedAtTimestamp()
-    this.allowLeavingForm()
   },
 
   methods: {
@@ -221,7 +221,6 @@ export default {
       e.preventDefault()
       this.submittedViaUpdateResource = true
       this.submittedViaUpdateResourceAndContinueEditing = false
-      this.allowLeavingForm()
       await this.updateResource()
     },
 
@@ -229,13 +228,11 @@ export default {
       e.preventDefault()
       this.submittedViaUpdateResourceAndContinueEditing = true
       this.submittedViaUpdateResource = false
-      this.allowLeavingForm()
       await this.updateResource()
     },
 
     cancelUpdatingResource() {
       this.handleProceedingToPreviousPage()
-      this.allowLeavingForm()
 
       this.proceedToPreviousPage(
         this.isRelation
@@ -298,8 +295,6 @@ export default {
           this.submittedViaUpdateResource = false
           this.submittedViaUpdateResourceAndContinueEditing = false
 
-          this.preventLeavingForm()
-
           this.handleOnUpdateResponseError(error)
         }
       }
@@ -333,8 +328,8 @@ export default {
      */
     updateResourceFormData() {
       return tap(new FormData(), formData => {
-        each(this.panels, panel => {
-          each(panel.fields, field => {
+        Object.values(this.panels).forEach(panel => {
+          Object.values(panel.fields).forEach(field => {
             field.fill(formData)
           })
         })
@@ -351,11 +346,8 @@ export default {
       this.lastRetrievedAt = Math.floor(new Date().getTime() / 1000)
     },
 
-    /**
-     * Prevent accidental abandonment only if form was changed.
-     */
     onUpdateFormStatus() {
-      this.updateFormStatus()
+      //
     },
   },
 

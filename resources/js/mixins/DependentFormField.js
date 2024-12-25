@@ -4,7 +4,6 @@ import forIn from 'lodash/forIn'
 import get from 'lodash/get'
 import identity from 'lodash/identity'
 import isEmpty from 'lodash/isEmpty'
-import isNil from 'lodash/isNil'
 import pickBy from 'lodash/pickBy'
 import FormField from './FormField'
 import { mapProps } from './propTypes'
@@ -47,16 +46,16 @@ export default {
   },
 
   mounted() {
-    if (this.relatedResourceName !== '' && !isNil(this.relatedResourceName)) {
+    if (filled(this.relatedResourceName)) {
       this.pivot = true
 
-      if (this.relatedResourceId !== '' && !isNil(this.relatedResourceId)) {
+      if (filled(this.relatedResourceId)) {
         this.editMode = 'update-attached'
       } else {
         this.editMode = 'attach'
       }
     } else {
-      if (this.resourceId !== '' && !isNil(this.resourceId)) {
+      if (filled(this.resourceId)) {
         this.editMode = 'update'
       }
     }
@@ -108,6 +107,10 @@ export default {
 
     /**
      * Provide a function to fills FormData when field is visible.
+     *
+     * @param {FormData} formData
+     * @param {string} attribute
+     * @param {any} value
      */
     fillIfVisible(formData, attribute, value) {
       if (this.currentlyIsVisible) {
@@ -131,6 +134,7 @@ export default {
                 viaResourceId: this.viaResourceId,
                 viaRelationship: this.viaRelationship,
                 field: this.fieldAttribute,
+                inline: this.shownViaNewRelationModal,
                 component: this.field.dependentComponentKey,
               },
               identity
@@ -141,7 +145,7 @@ export default {
           }
         )
         .then(response => {
-          let previousValue = this.currentField.value
+          let snapshot = JSON.parse(JSON.stringify(this.currentField))
           let wasVisible = this.currentlyIsVisible
 
           this.syncedField = response.data
@@ -155,8 +159,9 @@ export default {
             )
           }
 
-          if (isNil(this.syncedField.value)) {
-            this.syncedField.value = previousValue
+          if (this.syncedField.value == null) {
+            this.syncedField.value = snapshot.value
+            this.revertSyncedFieldToPreviousValue(snapshot)
           } else {
             this.setInitialValue()
           }
@@ -181,6 +186,10 @@ export default {
         })
     },
 
+    revertSyncedFieldToPreviousValue(field) {
+      //
+    },
+
     onSyncedField() {
       //
     },
@@ -189,6 +198,9 @@ export default {
       this.emitFieldValueChange(this.field.attribute, this.currentField.value)
     },
 
+    /**
+     * @returns {boolean}
+     */
     syncedFieldValueHasNotChanged() {
       const value = this.currentField.value
 
@@ -196,27 +208,33 @@ export default {
         return !filled(this.value)
       }
 
-      return !isNil(value) && value?.toString() === this.value?.toString()
+      return value != null && value?.toString() === this.value?.toString()
     },
   },
 
   computed: {
     /**
      * Determine the current field
+     *
+     * @returns {object}
      */
     currentField() {
       return this.syncedField || this.field
     },
 
     /**
-     * Determine if the field is in visible mode
+     * Determine if the field is in visible mode.
+     *
+     * @returns {boolean}
      */
     currentlyIsVisible() {
       return this.currentField.visible
     },
 
     /**
-     * Determine if the field is in readonly mode
+     * Determine if the field is in readonly mode.
+     *
+     * @returns {boolean}
      */
     currentlyIsReadonly() {
       if (this.syncedField !== null) {
@@ -231,16 +249,25 @@ export default {
       )
     },
 
+    /**
+     * @returns {string[]}
+     */
     dependsOn() {
       return this.field.dependsOn || []
     },
 
+    /**
+     * @returns {{[key: string]: any}}
+     */
     currentFieldValues() {
       return {
         [this.fieldAttribute]: this.value,
       }
     },
 
+    /**
+     * @returns {{[key: string]: any}}
+     */
     dependentFieldValues() {
       return {
         ...this.currentFieldValues,
@@ -248,10 +275,18 @@ export default {
       }
     },
 
+    /**
+     * @returns {string}
+     */
     encodedDependentFieldValues() {
       return btoa(escapeUnicode(JSON.stringify(this.dependentFieldValues)))
     },
 
+    /**
+     * Get the correct field sync endpoint URL.
+     *
+     * @returns {string}
+     */
     syncFieldEndpoint() {
       if (this.editMode === 'update-attached') {
         return `/nova-api/${this.resourceName}/${this.resourceId}/update-pivot-fields/${this.relatedResourceName}/${this.relatedResourceId}`

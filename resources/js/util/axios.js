@@ -1,6 +1,8 @@
 import axios from 'axios'
-import isNil from 'lodash/isNil'
 
+/**
+ * @returns {import('axios').AxiosInstance}
+ */
 export function setupAxios() {
   const instance = axios.create()
 
@@ -29,7 +31,7 @@ export function setupAxios() {
       // Handle Session Timeouts (Unauthorized)
       if (status === 401) {
         // Use redirect if being specificed by the response
-        if (!isNil(redirect)) {
+        if (redirect != null) {
           location.href = redirect
           return
         }

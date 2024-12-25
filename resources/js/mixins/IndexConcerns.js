@@ -1,12 +1,9 @@
+import { Filterable, InteractsWithQueryString, mapProps } from './index'
+import { computed } from 'vue'
 import debounce from 'lodash/debounce'
 import find from 'lodash/find'
 import includes from 'lodash/includes'
-import isNull from 'lodash/isNull'
-import map from 'lodash/map'
-import { Filterable, InteractsWithQueryString, mapProps } from './index'
-import { capitalize } from '@/util'
-import { computed } from 'vue'
-import filter from 'lodash/filter'
+import upperFirst from 'lodash/upperFirst'
 
 export default {
   mixins: [Filterable, InteractsWithQueryString],
@@ -69,6 +66,7 @@ export default {
     pivotActions: null,
     resourceHasId: true,
     resourceHasActions: false,
+    resourceHasSoleActions: false,
     resourceResponse: null,
     resourceResponseError: null,
     resources: [],
@@ -176,7 +174,9 @@ export default {
     },
 
     /**
-     * Toggle the selection of all resources
+     * Toggle the selection of all resources.
+     *
+     * @param {Event} e
      */
     toggleSelectAll(e) {
       if (e) {
@@ -193,7 +193,9 @@ export default {
     },
 
     /**
-     * Toggle the selection of all matching resources in the database
+     * Toggle the selection of all matching resources in the database.
+     *
+     * @param {Event} e
      */
     toggleSelectAllMatching(e) {
       if (e) {
@@ -210,8 +212,27 @@ export default {
       this.getActions()
     },
 
+    /**
+<<<<<<< HEAD
+     * Update the resource selection status.
+     *
+     * @param {object} resource
+=======
+     * Deselect all selections
+     */
+    deselectAllResources(e) {
+      if (e) {
+        e.preventDefault()
+      }
+
+      this.clearResourceSelections()
+
+      this.getActions()
+    },
+
     /*
      * Update the resource selection status
+>>>>>>> 5.0
      */
     updateSelectionStatus(resource) {
       if (!includes(this.selectedResources, resource)) {
@@ -227,7 +248,7 @@ export default {
     },
 
     /**
-     * Clear the selected resouces and the "select all" states.
+     * Clear the selected resources and the "select all" states.
      */
     clearResourceSelections() {
       this.selectAllMatchingResources = false
@@ -236,6 +257,8 @@ export default {
 
     /**
      * Sort the resources by the given field.
+     *
+     * @param {string} field
      */
     orderByField(field) {
       let direction = this.currentOrderByDirection == 'asc' ? 'desc' : 'asc'
@@ -244,17 +267,19 @@ export default {
         direction = 'asc'
       }
 
-      this.updateQueryString({
+      this.pushAfterUpdatingQueryString({
         [this.orderByParameter]: field.sortableUriKey,
         [this.orderByDirectionParameter]: direction,
       })
     },
 
     /**
-     * Reset the order by to its default state
+     * Reset the order by to its default state.
+     *
+     * @param {string} field
      */
     resetOrderBy(field) {
-      this.updateQueryString({
+      this.pushAfterUpdatingQueryString({
         [this.orderByParameter]: field.sortableUriKey,
         [this.orderByDirectionParameter]: null,
       })
@@ -284,14 +309,20 @@ export default {
 
     /**
      * Update the trashed constraint for the resource listing.
+     *
+     * @param {string} trashedStatus
      */
     trashedChanged(trashedStatus) {
       this.trashed = trashedStatus
-      this.updateQueryString({ [this.trashedParameter]: this.trashed })
+      this.pushAfterUpdatingQueryString({
+        [this.trashedParameter]: this.trashed,
+      })
     },
 
     /**
-     * Update the per page parameter in the query string
+     * Update the per page parameter in the query string.
+     *
+     * @param {number} perPage
      */
     updatePerPageChanged(perPage) {
       this.perPage = perPage
@@ -300,9 +331,11 @@ export default {
 
     /**
      * Select the next page.
+     *
+     * @param {number} page
      */
     selectPage(page) {
-      this.updateQueryString({ [this.pageParameter]: page })
+      this.pushAfterUpdatingQueryString({ [this.pageParameter]: page })
     },
 
     /**
@@ -327,7 +360,7 @@ export default {
      * Execute a search against the resource.
      */
     performSearch() {
-      this.updateQueryString({
+      this.pushAfterUpdatingQueryString({
         [this.pageParameter]: 1,
         [this.searchParameter]: this.search,
       })
@@ -341,7 +374,9 @@ export default {
 
   computed: {
     /**
-     * Determine if the resource has any filters
+     * Determine if the resource has any filters.
+     *
+     * @returns {boolean}
      */
     hasFilters() {
       return this.$store.getters[`${this.resourceName}/hasFilters`]
@@ -349,15 +384,19 @@ export default {
 
     /**
      * Get the name of the page query string variable.
+     *
+     * @returns {string}
      */
     pageParameter() {
       return this.viaRelationship
-        ? this.viaRelationship + '_page'
-        : this.resourceName + '_page'
+        ? `${this.viaRelationship}_page`
+        : `${this.resourceName}_page`
     },
 
     /**
      * Determine if all resources are selected on the page.
+     *
+     * @returns {boolean}
      */
     selectAllChecked() {
       return this.selectedResources.length == this.resources.length
@@ -365,6 +404,8 @@ export default {
 
     /**
      * Determine if Select All Dropdown state is indeterminate.
+     *
+     * @returns {boolean}
      */
     selectAllIndeterminate() {
       return (
@@ -373,16 +414,24 @@ export default {
       )
     },
 
+    /**
+     * @returns {boolean}
+     */
     selectAllAndSelectAllMatchingChecked() {
       return this.selectAllChecked && this.selectAllMatchingChecked
     },
 
+    /**
+     * @returns {boolean}
+     */
     selectAllOrSelectAllMatchingChecked() {
       return this.selectAllChecked || this.selectAllMatchingChecked
     },
 
     /**
      * Determine if all matching resources are selected.
+     *
+     * @returns {boolean}
      */
     selectAllMatchingChecked() {
       return this.selectAllMatchingResources
@@ -390,23 +439,28 @@ export default {
 
     /**
      * Get the IDs for the selected resources.
+     *
+     * @returns {int[]|string[]}
      */
     selectedResourceIds() {
-      return map(this.selectedResources, resource => resource.id.value)
+      return this.selectedResources.map(resource => resource.id.value)
     },
 
     /**
      * Get the Pivot IDs for the selected resources.
+     *
+     * @returns {int[]|string[]|null[]}
      */
     selectedPivotIds() {
-      return map(
-        this.selectedResources,
+      return this.selectedResources.map(
         resource => resource.id.pivotValue ?? null
       )
     },
 
     /**
      * Get the current search value from the query string.
+     *
+     * @returns {string}
      */
     currentSearch() {
       return this.queryStringParams[this.searchParameter] || ''
@@ -414,6 +468,8 @@ export default {
 
     /**
      * Get the current order by value from the query string.
+     *
+     * @returns {string}
      */
     currentOrderBy() {
       return this.queryStringParams[this.orderByParameter] || ''
@@ -421,6 +477,8 @@ export default {
 
     /**
      * Get the current order by direction from the query string.
+     *
+     * @returns {string|null}
      */
     currentOrderByDirection() {
       return this.queryStringParams[this.orderByDirectionParameter] || null
@@ -428,6 +486,8 @@ export default {
 
     /**
      * Get the current trashed constraint value from the query string.
+     *
+     * @returns {string}
      */
     currentTrashed() {
       return this.queryStringParams[this.trashedParameter] || ''
@@ -435,6 +495,8 @@ export default {
 
     /**
      * Determine if the current resource listing is via a many-to-many relationship.
+     *
+     * @returns {boolean}
      */
     viaManyToMany() {
       return (
@@ -444,41 +506,51 @@ export default {
     },
 
     /**
-     * Determine if the index is a relation field
+     * Determine if the index is a relation field.
+     *
+     * @returns {boolean}
      */
     isRelation() {
       return Boolean(this.viaResourceId && this.viaRelationship)
     },
 
     /**
-     * Get the singular name for the resource
+     * Get the singular name for the resource.
+     *
+     * @returns {string|null}
      */
     singularName() {
       if (this.isRelation && this.field) {
-        return capitalize(this.field.singularLabel)
+        return upperFirst(this.field.singularLabel)
       }
 
       if (this.resourceInformation) {
-        return capitalize(this.resourceInformation.singularLabel)
+        return upperFirst(this.resourceInformation.singularLabel)
       }
     },
 
     /**
-     * Determine if there are any resources for the view
+     * Determine if there are any resources for the view.
+     *
+     * @returns {boolean}
      */
     hasResources() {
       return Boolean(this.resources.length > 0)
     },
 
     /**
-     * Determine if there any lenses for this resource
+     * Determine if there any lenses for this resource.
+     *
+     * @returns {boolean}
      */
     hasLenses() {
       return Boolean(this.lenses.length > 0)
     },
 
     /**
-     * Determine if the resource should show any cards
+     * Determine if the resource should show any cards.
+     *
+     * @returns {boolean}
      */
     shouldShowCards() {
       // Don't show cards if this resource is beings shown via a relations
@@ -486,14 +558,37 @@ export default {
     },
 
     /**
-     * Determine whether to show the selection checkboxes for resources
+     * Determine whether to show the select all election checkboxes for resources.
+     *
+     * @returns {boolean}
+     */
+    shouldShowSelectAllCheckboxes() {
+      if (this.hasResources === false) {
+        return false
+      } else if (this.resourceHasId === false) {
+        return false
+      } else if (
+        this.authorizedToDeleteAnyResources ||
+        this.canShowDeleteMenu
+      ) {
+        return true
+      } else if (this.resourceHasActions === true) {
+        return true
+      }
+    },
+
+    /**
+     * Determine whether to show the selection checkboxes for resources.
+     *
+     * @returns {boolean}
      */
     shouldShowCheckboxes() {
       return (
-        Boolean(this.hasResources) &&
-        Boolean(this.resourceHasId) &&
+        this.hasResources &&
+        this.resourceHasId &&
         Boolean(
           this.resourceHasActions ||
+            this.resourceHasSoleActions ||
             this.authorizedToDeleteAnyResources ||
             this.canShowDeleteMenu
         )
@@ -501,7 +596,9 @@ export default {
     },
 
     /**
-     * Determine whether the delete menu should be shown to the user
+     * Determine whether the delete menu should be shown to the user.
+     *
+     * @returns {boolean}
      */
     shouldShowDeleteMenu() {
       return (
@@ -511,6 +608,8 @@ export default {
 
     /**
      * Determine if any selected resources may be deleted.
+     *
+     * @returns {boolean}
      */
     authorizedToDeleteSelectedResources() {
       return Boolean(
@@ -520,6 +619,8 @@ export default {
 
     /**
      * Determine if any selected resources may be force deleted.
+     *
+     * @returns {boolean}
      */
     authorizedToForceDeleteSelectedResources() {
       return Boolean(
@@ -532,44 +633,52 @@ export default {
 
     /**
      * Determine if the user is authorized to view any listed resource.
+     *
+     * @returns {boolean}
      */
     authorizedToViewAnyResources() {
       return (
         this.resources.length > 0 &&
-        Boolean(this.resourceHasId) &&
+        this.resourceHasId &&
         Boolean(find(this.resources, resource => resource.authorizedToView))
       )
     },
 
     /**
      * Determine if the user is authorized to view any listed resource.
+     *
+     * @returns {boolean}
      */
     authorizedToUpdateAnyResources() {
       return (
         this.resources.length > 0 &&
-        Boolean(this.resourceHasId) &&
+        this.resourceHasId &&
         Boolean(find(this.resources, resource => resource.authorizedToUpdate))
       )
     },
 
     /**
      * Determine if the user is authorized to delete any listed resource.
+     *
+     * @returns {boolean}
      */
     authorizedToDeleteAnyResources() {
       return (
         this.resources.length > 0 &&
-        Boolean(this.resourceHasId) &&
+        this.resourceHasId &&
         Boolean(find(this.resources, resource => resource.authorizedToDelete))
       )
     },
 
     /**
      * Determine if the user is authorized to force delete any listed resource.
+     *
+     * @returns {boolean}
      */
     authorizedToForceDeleteAnyResources() {
       return (
         this.resources.length > 0 &&
-        Boolean(this.resourceHasId) &&
+        this.resourceHasId &&
         Boolean(
           find(this.resources, resource => resource.authorizedToForceDelete)
         )
@@ -578,10 +687,12 @@ export default {
 
     /**
      * Determine if any selected resources may be restored.
+     *
+     * @returns {boolean}
      */
     authorizedToRestoreSelectedResources() {
       return (
-        Boolean(this.resourceHasId) &&
+        this.resourceHasId &&
         Boolean(
           find(this.selectedResources, resource => resource.authorizedToRestore)
         )
@@ -590,24 +701,30 @@ export default {
 
     /**
      * Determine if the user is authorized to restore any listed resource.
+     *
+     * @returns {boolean}
      */
     authorizedToRestoreAnyResources() {
       return (
         this.resources.length > 0 &&
-        Boolean(this.resourceHasId) &&
+        this.resourceHasId &&
         Boolean(find(this.resources, resource => resource.authorizedToRestore))
       )
     },
 
     /**
-     * Return the currently encoded filter string from the store
+     * Return the currently encoded filter string from the store.
+     *
+     * @param {string}
      */
     encodedFilters() {
       return this.$store.getters[`${this.resourceName}/currentEncodedFilters`]
     },
 
     /**
-     * Return the initial encoded filters from the query string
+     * Return the initial encoded filters from the query string.
+     *
+     * @param {string}
      */
     initialEncodedFilters() {
       return this.queryStringParams[this.filterParameter] || ''
@@ -615,6 +732,8 @@ export default {
 
     /**
      * Return the pagination component for the resource.
+     *
+     * @param {string}
      */
     paginationComponent() {
       return `pagination-${Nova.config('pagination') || 'links'}`
@@ -622,6 +741,8 @@ export default {
 
     /**
      * Determine if the resources has a next page.
+     *
+     * @param {boolean}
      */
     hasNextPage() {
       return Boolean(
@@ -631,6 +752,8 @@ export default {
 
     /**
      * Determine if the resources has a previous page.
+     *
+     * @param {boolean}
      */
     hasPreviousPage() {
       return Boolean(
@@ -640,13 +763,17 @@ export default {
 
     /**
      * Return the total pages for the resource.
+     *
+     * @param {number}
      */
     totalPages() {
       return Math.ceil(this.allMatchingResourceCount / this.currentPerPage)
     },
 
     /**
-     * Return the resource count label
+     * Return the resource count label.
+     *
+     * @param {string}
      */
     resourceCountLabel() {
       const first = this.perPage * (this.currentPage - 1)
@@ -661,6 +788,8 @@ export default {
 
     /**
      * Get the current per page value from the query string.
+     *
+     * @param {number}
      */
     currentPerPage() {
       return this.perPage
@@ -668,6 +797,8 @@ export default {
 
     /**
      * The per-page options configured for this resource.
+     *
+     * @param {number[]|null}
      */
     perPageOptions() {
       if (this.resourceResponse) {
@@ -676,7 +807,9 @@ export default {
     },
 
     /**
-     * Get the default label for the create button
+     * Get the default label for the create button.
+     *
+     * @returns {string}
      */
     createButtonLabel() {
       if (this.resourceInformation)
@@ -687,6 +820,8 @@ export default {
 
     /**
      * Build the resource request query string.
+     *
+     * @returns {{[key: string]: any}}
      */
     resourceRequestQueryString() {
       const queryString = {
@@ -713,6 +848,8 @@ export default {
 
     /**
      * Determine if the action selector should be shown.
+     *
+     * @param {boolean}
      */
     shouldShowActionSelector() {
       return this.selectedResources.length > 0 || this.haveStandaloneActions
@@ -720,6 +857,8 @@ export default {
 
     /**
      * Determine if the view is a resource index or a lens.
+     *
+     * @param {boolean}
      */
     isLensView() {
       return this.lens !== '' && this.lens != undefined && this.lens != null
@@ -727,6 +866,8 @@ export default {
 
     /**
      * Determine whether the pagination component should be shown.
+     *
+     * @param {boolean}
      */
     shouldShowPagination() {
       return (
@@ -738,6 +879,8 @@ export default {
 
     /**
      * Return the current count of all resources
+     *
+     * @param {number}
      */
     currentResourceCount() {
       return this.resources.length
@@ -745,58 +888,72 @@ export default {
 
     /**
      * Get the name of the search query string variable.
+     *
+     * @param {string}
      */
     searchParameter() {
       return this.viaRelationship
-        ? this.viaRelationship + '_search'
-        : this.resourceName + '_search'
+        ? `${this.viaRelationship}_search`
+        : `${this.resourceName}_search`
     },
 
     /**
      * Get the name of the order by query string variable.
+     *
+     * @param {string}
      */
     orderByParameter() {
       return this.viaRelationship
-        ? this.viaRelationship + '_order'
-        : this.resourceName + '_order'
+        ? `${this.viaRelationship}_order`
+        : `${this.resourceName}_order`
     },
 
     /**
      * Get the name of the order by direction query string variable.
+     *
+     * @param {string}
      */
     orderByDirectionParameter() {
       return this.viaRelationship
-        ? this.viaRelationship + '_direction'
-        : this.resourceName + '_direction'
+        ? `${this.viaRelationship}_direction`
+        : `${this.resourceName}_direction`
     },
 
     /**
      * Get the name of the trashed constraint query string variable.
+     *
+     * @param {string}
      */
     trashedParameter() {
       return this.viaRelationship
-        ? this.viaRelationship + '_trashed'
-        : this.resourceName + '_trashed'
+        ? `${this.viaRelationship}_trashed`
+        : `${this.resourceName}_trashed`
     },
 
     /**
      * Get the name of the per page query string variable.
+     *
+     * @param {string}
      */
     perPageParameter() {
       return this.viaRelationship
-        ? this.viaRelationship + '_per_page'
-        : this.resourceName + '_per_page'
+        ? `${this.viaRelationship}_per_page`
+        : `${this.resourceName}_per_page`
     },
 
     /**
      * Determine whether there are any standalone actions.
+     *
+     * @returns {boolean}
      */
     haveStandaloneActions() {
-      return filter(this.allActions, a => a.standalone === true).length > 0
+      return this.allActions.filter(a => a.standalone === true).length > 0
     },
 
     /**
      * Return the available actions.
+     *
+     * @returns {object[]}
      */
     availableActions() {
       return this.actions
@@ -804,6 +961,8 @@ export default {
 
     /**
      * Determine if the resource has any pivot actions available.
+     *
+     * @returns {boolean}
      */
     hasPivotActions() {
       return this.pivotActions && this.pivotActions.actions.length > 0
@@ -811,6 +970,8 @@ export default {
 
     /**
      * Get the name of the pivot model for the resource.
+     *
+     * @returns {string}
      */
     pivotName() {
       return this.pivotActions ? this.pivotActions.name : ''
@@ -818,6 +979,8 @@ export default {
 
     /**
      * Determine if the resource has any actions available.
+     *
+     * @returns {boolean}
      */
     actionsAreAvailable() {
       return this.allActions.length > 0
@@ -825,6 +988,8 @@ export default {
 
     /**
      * Get all of the actions available to the resource.
+     *
+     * @returns {object[]}
      */
     allActions() {
       return this.hasPivotActions
@@ -832,12 +997,19 @@ export default {
         : this.actions
     },
 
+    /**
+     * Get all of the standalon actions available to the resource.
+     *
+     * @returns {object[]}
+     */
     availableStandaloneActions() {
       return this.allActions.filter(a => a.standalone === true)
     },
 
     /**
      * Get the selected resources for the action selector.
+     *
+     * @returns {string|string[]|int[]}
      */
     selectedResourcesForActionSelector() {
       return this.selectAllMatchingChecked ? 'all' : this.selectedResources

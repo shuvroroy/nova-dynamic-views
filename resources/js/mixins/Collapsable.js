@@ -21,18 +21,30 @@ export default {
   },
 
   computed: {
+    /**
+     * @returns {string}
+     */
     ariaExpanded() {
       return this.collapsed === false ? 'true' : 'false'
     },
 
+    /**
+     * @returns {boolean}
+     */
     shouldBeCollapsed() {
       return this.collapsed
     },
 
+    /**
+     * @returns {string}
+     */
     localStorageKey() {
       return `nova.navigation.${this.item.key}.collapsed`
     },
 
+    /**
+     * @returns {boolean}
+     */
     collapsedByDefault() {
       return false
     },

@@ -12,6 +12,9 @@
       v-if="!viaResource"
       class="mb-3"
       :resource-name="resourceName"
+      :via-resource="viaResource"
+      :via-resource-id="viaResourceId"
+      :via-relationship="viaRelationship"
     />
 
     <Cards
@@ -43,21 +46,16 @@
         <IndexSearchInput
           v-if="resourceInformation && resourceInformation.searchable"
           :searchable="resourceInformation && resourceInformation.searchable"
-          v-model:keyword="search"
-          @update:keyword="search = $event"
+          v-model="search"
         />
 
-        <div
-          v-if="
-            availableStandaloneActions.length > 0 ||
-            authorizedToCreate ||
-            authorizedToRelate
-          "
-          class="inline-flex items-center gap-2 ml-auto"
-        >
+        <div class="inline-flex items-center gap-2 ml-auto">
           <custom-index-toolbar
             v-if="!viaResource"
             :resource-name="resourceName"
+            :via-resource="viaResource"
+            :via-resource-id="viaResourceId"
+            :via-relationship="viaRelationship"
           />
 
           <!-- Action Dropdown -->
@@ -76,6 +74,7 @@
 
           <!-- Create / Attach Button -->
           <CreateResourceButton
+            v-if="authorizedToCreate || authorizedToRelate"
             :label="createButtonLabel"
             :singular-name="singularName"
             :resource-name="resourceName"
@@ -133,13 +132,13 @@
           :restore-all-matching-resources="restoreAllMatchingResources"
           :restore-selected-resources="restoreSelectedResources"
           :select-all-matching-checked="selectAllMatchingResources"
-          @deselect="clearResourceSelections"
+          @deselect="deselectAllResources"
           :selected-resources="selectedResources"
           :selected-resources-for-action-selector="
             selectedResourcesForActionSelector
           "
           :should-show-action-selector="shouldShowActionSelector"
-          :should-show-checkboxes="shouldShowCheckboxes"
+          :should-show-checkboxes="shouldShowSelectAllCheckboxes"
           :should-show-delete-menu="shouldShowDeleteMenu"
           :should-show-polling-toggle="shouldShowPollingToggle"
           :soft-deletes="softDeletes"
@@ -225,7 +224,6 @@
 </template>
 
 <script>
-// this.$refs.selectControl.selectedIndex = 0
 import { CancelToken, isCancel } from 'axios'
 import {
   HasCards,
@@ -468,6 +466,7 @@ export default {
         .then(response => {
           this.actions = response.data.actions
           this.pivotActions = response.data.pivotActions
+          this.resourceHasSoleActions = response.data.counts.sole > 0
           this.resourceHasActions = response.data.counts.resource > 0
         })
         .catch(e => {

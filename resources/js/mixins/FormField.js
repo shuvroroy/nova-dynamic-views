@@ -58,6 +58,8 @@ export default {
 
     /**
      * Return the field default value.
+     *
+     * @returns {string}
      */
     fieldDefaultValue() {
       return ''
@@ -65,7 +67,9 @@ export default {
 
     /**
      * Provide a function that fills a passed FormData object with the
-     * field's internal value attribute
+     * field's internal value attribute.
+     *
+     * @param {FormData} formData
      */
     fill(formData) {
       this.fillIfVisible(formData, this.fieldAttribute, String(this.value))
@@ -73,6 +77,10 @@ export default {
 
     /**
      * Provide a function to fills FormData when field is visible.
+     *
+     * @param {FormData} formData
+     * @param {string} attribute
+     * @param {any} value
      */
     fillIfVisible(formData, attribute, value) {
       if (this.isVisible) {
@@ -81,7 +89,9 @@ export default {
     },
 
     /**
-     * Update the field's internal value
+     * Update the field's internal value..
+     *
+     * @param {Event} event
      */
     handleChange(event) {
       this.value = event.target.value
@@ -99,6 +109,9 @@ export default {
       //
     },
 
+    /**
+     * @param {any} value
+     */
     listenToValueChanges(value) {
       this.value = value
     },
@@ -107,6 +120,8 @@ export default {
   computed: {
     /**
      * Determine the current field.
+     *
+     * @returns {object}
      */
     currentField() {
       return this.field
@@ -114,6 +129,8 @@ export default {
 
     /**
      * Determine if the field should use all the available white-space.
+     *
+     * @returns {boolean}
      */
     fullWidthContent() {
       return this.currentField.fullWidth || this.field.fullWidth
@@ -121,6 +138,8 @@ export default {
 
     /**
      * Return the placeholder text for the field.
+     *
+     * @returns {string}
      */
     placeholder() {
       return this.currentField.placeholder || this.field.name
@@ -128,13 +147,17 @@ export default {
 
     /**
      * Determine if the field is in visible mode
+     *
+     * @returns {boolean}
      */
     isVisible() {
       return this.field.visible
     },
 
     /**
-     * Determine if the field is in readonly mode
+     * Determine if the field is in readonly mode.
+     *
+     * @returns {boolean}
      */
     isReadonly() {
       return Boolean(
@@ -143,7 +166,9 @@ export default {
     },
 
     /**
-     * Determine if the field is accessed from Action
+     * Determine if the field is accessed from Action.
+     *
+     * @returns {boolean}
      */
     isActionRequest() {
       return ['action-fullscreen', 'action-modal'].includes(this.mode)

@@ -14,6 +14,10 @@
       class="mb-3"
       :resource-name="resourceName"
       :resource-id="resourceId"
+      :related-resource-name="relatedResourceName"
+      :via-relationship="viaRelationship"
+      :via-resource="viaResource"
+      :via-resource-id="viaResourceId"
     />
 
     <Heading
@@ -59,15 +63,15 @@
             <div class="flex items-center">
               <SearchInput
                 v-if="field.searchable"
-                :dusk="`${field.resourceName}-search-input`"
+                v-model="selectedResourceId"
+                @selected="selectResource"
                 @input="performSearch"
                 @clear="clearResourceSelection"
-                @selected="selectResource"
+                :options="availableResources"
                 :debounce="field.debounce"
-                :value="selectedResource"
-                :data="availableResources"
                 trackBy="value"
                 class="w-full"
+                :dusk="`${field.resourceName}-search-input`"
               >
                 <div v-if="selectedResource" class="flex items-center">
                   <div v-if="selectedResource.avatar" class="mr-3">
@@ -116,6 +120,10 @@
 
               <SelectControl
                 v-else
+                v-model="selectedResourceId"
+                @selected="selectResource"
+                :options="availableResources"
+                label="display"
                 class="w-full"
                 :class="{
                   'form-control-bordered-error': validationErrors.has(
@@ -123,10 +131,6 @@
                   ),
                 }"
                 dusk="attachable-select"
-                v-model:selected="selectedResourceId"
-                @change="selectResourceFromSelectControl"
-                :options="availableResources"
-                :label="'display'"
               >
                 <option value="" disabled selected>
                   {{
@@ -137,8 +141,11 @@
                 </option>
               </SelectControl>
 
-              <CreateRelationButton
+              <Button
                 v-if="canShowNewRelationModal"
+                ariant="link"
+                size="small"
+                leading-icon="plus-circle"
                 @click="openRelationModal"
                 class="ml-2"
                 :dusk="`${field.attribute}-inline-create`"
@@ -157,7 +164,7 @@
             />
 
             <TrashedCheckbox
-              v-if="softDeletes"
+              v-if="shouldShowTrashed"
               class="mt-3"
               :resource-name="field.resourceName"
               :checked="withTrashed"
@@ -224,9 +231,7 @@
 </template>
 
 <script>
-import each from 'lodash/each'
-import find from 'lodash/find'
-import tap from 'lodash/tap'
+import { Button } from 'laravel-nova-ui'
 import {
   PerformsSearches,
   TogglesTrashed,
@@ -235,7 +240,8 @@ import {
   PreventsFormAbandonment,
 } from '@/mixins'
 import { mapActions } from 'vuex'
-import { Button } from 'laravel-nova-ui'
+import storage from '@/storage/PivotableFieldStorage'
+import tap from 'lodash/tap'
 
 export default {
   components: {
@@ -288,7 +294,6 @@ export default {
     field: null,
     softDeletes: false,
     fields: [],
-    selectedResource: null,
     selectedResourceId: null,
     relationModalOpen: false,
     initializingWithExistingResource: false,
@@ -318,7 +323,6 @@ export default {
       this.getField()
       this.getPivotFields()
       this.resetErrors()
-      this.allowLeavingForm()
     },
 
     /**
@@ -327,7 +331,7 @@ export default {
     handlePivotFieldsLoaded() {
       this.loading = false
 
-      each(this.fields, field => {
+      Object.values(this.fields).forEach(field => {
         field.fill = () => ''
       })
     },
@@ -392,15 +396,18 @@ export default {
     getAvailableResources(search = '') {
       Nova.$progress.start()
 
-      return Nova.request()
-        .get(
-          `/nova-api/${this.resourceName}/${this.resourceId}/attachable/${this.relatedResourceName}`,
+      return storage
+        .fetchAvailableResources(
+          this.resourceName,
+          this.resourceId,
+          this.relatedResourceName,
           {
             params: {
               search,
               current: this.selectedResourceId,
               first: this.initializingWithExistingResource,
               withTrashed: this.withTrashed,
+              component: this.field.component,
               viaRelationship: this.viaRelationship,
             },
           }
@@ -441,7 +448,6 @@ export default {
         await this.attachRequest()
 
         this.submittedViaAttachResource = false
-        this.allowLeavingForm()
 
         await this.fetchPolicies(),
           Nova.success(this.__('The resource was attached!'))
@@ -451,8 +457,6 @@ export default {
         window.scrollTo(0, 0)
 
         this.submittedViaAttachResource = false
-
-        this.preventLeavingForm()
 
         this.handleOnCreateResponseError(error)
       }
@@ -471,8 +475,6 @@ export default {
 
         this.disableNavigateBackUsingHistory()
 
-        this.allowLeavingForm()
-
         this.submittedViaAttachAndAttachAnother = false
 
         await this.fetchPolicies()
@@ -488,7 +490,6 @@ export default {
 
     cancelAttachingResource() {
       this.handleProceedingToPreviousPage()
-      this.allowLeavingForm()
 
       this.proceedToPreviousPage(
         `/resources/${this.resourceName}/${this.resourceId}`
@@ -516,41 +517,22 @@ export default {
      */
     attachmentFormData() {
       return tap(new FormData(), formData => {
-        each(this.fields, field => {
+        Object.values(this.fields).forEach(field => {
           field.fill(formData)
         })
 
-        if (!this.selectedResource) {
+        if (!this.selectedResourceId) {
           formData.append(this.relatedResourceName, '')
         } else {
-          formData.append(this.relatedResourceName, this.selectedResource.value)
+          formData.append(
+            this.relatedResourceName,
+            this.selectedResourceId ?? ''
+          )
         }
 
         formData.append(this.relatedResourceName + '_trashed', this.withTrashed)
         formData.append('viaRelationship', this.viaRelationship)
       })
-    },
-
-    /**
-     * Select a resource using the <select> control
-     */
-    selectResourceFromSelectControl(value) {
-      this.selectedResourceId = value
-      this.selectInitialResource()
-
-      if (this.field) {
-        this.emitFieldValueChange(this.fieldAttribute, this.selectedResourceId)
-      }
-    },
-
-    /**
-     * Select the initial selected resource
-     */
-    selectInitialResource() {
-      this.selectedResource = find(
-        this.availableResources,
-        r => r.value == this.selectedResourceId
-      )
     },
 
     /**
@@ -565,18 +547,15 @@ export default {
       }
     },
 
-    /**
-     * Prevent accidental abandonment only if form was changed.
-     */
     onUpdateFormStatus() {
-      this.updateFormStatus()
+      //
     },
 
     handleSetResource({ id }) {
       this.closeRelationModal()
       this.selectedResourceId = id
       this.initializingWithExistingResource = true
-      this.getAvailableResources().then(() => this.selectInitialResource())
+      this.getAvailableResources()
     },
 
     openRelationModal() {
@@ -596,6 +575,13 @@ export default {
         this.initializingWithExistingResource = false
         this.getAvailableResources()
       }
+    },
+
+    isSelectedResourceId(value) {
+      return (
+        value != null &&
+        value?.toString() === this.selectedResourceId?.toString()
+      )
     },
   },
 
@@ -655,17 +641,29 @@ export default {
     },
 
     shouldShowTrashed() {
-      return Boolean(this.softDeletes)
+      return (
+        Boolean(this.softDeletes) &&
+        !this.field.readonly &&
+        this.field.displaysWithTrashed
+      )
     },
 
     authorizedToCreate() {
-      return find(Nova.config('resources'), resource => {
-        return resource.uriKey == this.field.resourceName
-      }).authorizedToCreate
+      return (
+        Nova.config('resources').find(resource => {
+          return resource.uriKey == this.field.resourceName
+        })?.authorizedToCreate || false
+      )
     },
 
     canShowNewRelationModal() {
       return this.field.showCreateRelationButton && this.authorizedToCreate
+    },
+
+    selectedResource() {
+      return this.availableResources.find(r =>
+        this.isSelectedResourceId(r.value)
+      )
     },
   },
 }

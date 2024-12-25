@@ -1,5 +1,3 @@
-import filter from 'lodash/filter'
-
 export default {
   props: {
     loadCards: {
@@ -39,6 +37,8 @@ export default {
   computed: {
     /**
      * Determine whether we have cards to show on the Dashboard.
+     *
+     * @returns {boolean}
      */
     shouldShowCards() {
       return this.cards.length > 0
@@ -46,13 +46,17 @@ export default {
 
     /**
      * Determine if the cards array contains some detail-only cards.
+     *
+     * @returns {boolean}
      */
     hasDetailOnlyCards() {
-      return filter(this.cards, c => c.onlyOnDetail == true).length > 0
+      return this.cards.filter(c => c.onlyOnDetail == true).length > 0
     },
 
     /**
      * Get the extra card params to pass to the endpoint.
+     *
+     * @returns {null}
      */
     extraCardParams() {
       return null

@@ -15,8 +15,8 @@ Nova.booting((app) => {
   app.component('AttachResource', Attach)
   app.component('UpdateAttachedResource', UpdateAttached)
 
-  pages['Nova.Update'].components.ResourceUpdate = ResourceUpdate
-  pages['Nova.Lens'].components.ResourceLens = ResourceLens
+  pages['Nova.Update'] = ResourceUpdate
+  pages['Nova.Lens'] = ResourceLens
 
   const components = [
     'attach-header',
@@ -32,7 +32,15 @@ Nova.booting((app) => {
 
   components.forEach((component) => {
     app.component('custom-' + component, {
-      props: ['resourceName'],
+      props: [
+        'resourceName',
+        'resourceId',
+        'relatedResourceName',
+        'relatedResourceId',
+        'viaResource',
+        'viaResourceId',
+        'viaRelationship',
+      ],
 
       template: '<div :class="componentClass"><span v-for="(comp, index) in customComponents" :key="index">' +
         '<component :is="comp.name" v-bind="comp.meta"></component>' +
@@ -47,21 +55,24 @@ Nova.booting((app) => {
       },
 
       mounted() {
-        let url = '/nova-vendor/nova-dynamic-views/' + this.resourceName + '/' + this.componentName;
+        let url = '/nova-vendor/nova-dynamic-views/' + this.resourceName + '/' + this.componentName
 
-        let queryParams = {};
+        let queryParams = {}
 
-        if (Nova.$router.page.props && Nova.$router.page.props.viaRelationship) {
-          queryParams.viaRelationship = Nova.$router.page.props.viaRelationship;
+        if (this.viaRelationship) {
+          queryParams.viaRelationship = this.viaRelationship
         }
-        if (Nova.$router.page.props && Nova.$router.page.props.viaResource) {
-          queryParams.viaResource = Nova.$router.page.props.viaResource;
+
+        if (this.viaResource) {
+          queryParams.viaResource = this.viaResource
         }
-        if (Nova.$router.page.props && Nova.$router.page.props.viaResourceId) {
-          queryParams.viaResourceId = Nova.$router.page.props.viaResourceId;
+
+        if (this.viaResourceId) {
+          queryParams.viaResourceId = this.viaResourceId
         }
-        if (Nova.$router.page.props && Nova.$router.page.props.resourceId) {
-          queryParams.id = Nova.$router.page.props.resourceId;
+
+        if (this.resourceId) {
+          queryParams.id = this.resourceId
         }
 
         let queryString = new URLSearchParams(queryParams).toString();

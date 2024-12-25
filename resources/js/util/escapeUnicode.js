@@ -1,3 +1,7 @@
+/**
+ * @param {string} str
+ * @returns {string}
+ */
 export function escapeUnicode(str) {
   return str.replace(
     /[^\0-~]/g,

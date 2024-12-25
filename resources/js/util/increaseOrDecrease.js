@@ -1,3 +1,8 @@
+/**
+ * @param {number} currentValue
+ * @param {number} startingValue
+ * @returns {boolean|null}
+ */
 export default function increaseOrDecrease(currentValue, startingValue) {
   if (startingValue === 0) {
     return null
