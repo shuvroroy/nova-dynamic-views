@@ -14,4 +14,4 @@ use ShuvroRoy\NovaDynamicViews\Http\Controllers\NovaDynamicViewsController;
 |
 */
 
- Route::get('{resource}/{method}', NovaDynamicViewsController::class);
+Route::get('{resource}/{method}', NovaDynamicViewsController::class);
