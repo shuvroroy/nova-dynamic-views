@@ -13,6 +13,9 @@
     <custom-create-header
       class="mb-3"
       :resource-name="resourceName"
+      :via-resource="viaResource"
+      :via-resource-id="viaResourceId"
+      :via-relationship="viaRelationship"
     />
 
     <form

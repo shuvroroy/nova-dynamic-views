@@ -14,6 +14,10 @@
       class="mb-3"
       :resource-name="resourceName"
       :resource-id="resourceId"
+      :related-resource-name="relatedResourceName"
+      :via-relationship="viaRelationship"
+      :via-resource="viaResource"
+      :via-resource-id="viaResourceId"
     />
 
     <Heading
