@@ -154,7 +154,7 @@ All `custom-*-*` nova placeholders are available as camel case methods postfixed
 
 ## Create custom component
 
-This is just a kick start documentation for this. For more info, see https://nova.laravel.com/docs/4.0/customization/resource-tools.html
+This is just a kick start documentation for this. For more info, see https://nova.laravel.com/docs/v5/customization/resource-tools
 
 Create a new resource tool with artisan:
 
