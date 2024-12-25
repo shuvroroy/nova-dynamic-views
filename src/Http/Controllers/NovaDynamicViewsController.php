@@ -18,6 +18,7 @@ class NovaDynamicViewsController extends Controller
 
         if(method_exists($resource, $method)) {
             $data = $resource->$method();
+
             if($data) {
                 return $data;
             }
