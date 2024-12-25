@@ -12,7 +12,7 @@ This package will help to add some custom placeholder components like `custom-in
 ## Requirements
 
 * PHP (^8.1 or higher)
-* Laravel Nova (^4.0 or higher)
+* Laravel Nova (^5.0 or higher)
 
 ## Installation
 
