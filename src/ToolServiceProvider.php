@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Nova\Events\ServingNova;
 use Laravel\Nova\Nova;
-use Laravel\Nova\Http\Middleware\Authenticate;
 use ShuvroRoy\NovaDynamicViews\Http\Middleware\Authorize;
 
 class ToolServiceProvider extends ServiceProvider
@@ -16,6 +15,10 @@ class ToolServiceProvider extends ServiceProvider
         $this->app->booted(function () {
             $this->routes();
         });
+
+        Nova::serving(function (ServingNova $event) {
+            Nova::script('nova-dynamic-views', __DIR__.'/../dist/js/tool.js');
+        });
     }
 
     protected function routes(): void
@@ -24,7 +27,7 @@ class ToolServiceProvider extends ServiceProvider
             return;
         }
 
-        Route::middleware(['nova', Authenticate::class, Authorize::class])
+        Route::middleware(['nova'])
                 ->prefix('nova-vendor/nova-dynamic-views')
                 ->group(__DIR__.'/../routes/api.php');
     }
