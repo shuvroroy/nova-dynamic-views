@@ -16,6 +16,9 @@
       :resource="resource"
       :resource-id="resourceId"
       :resource-name="resourceName"
+      :via-resource="viaResource"
+      :via-resource-id="viaResourceId"
+      :via-relationship="viaRelationship"
     />
 
     <div v-if="shouldShowCards && hasDetailOnlyCards">
@@ -67,6 +70,9 @@
               :resource="resource"
               :resource-name="resourceName"
               :resource-id="resourceId"
+              :via-resource="viaResource"
+              :via-resource-id="viaResourceId"
+              :via-relationship="viaRelationship"
             />
 
             <!-- Actions Menu -->
