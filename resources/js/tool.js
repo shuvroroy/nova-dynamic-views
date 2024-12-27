@@ -28,6 +28,7 @@ Nova.booting((app) => {
     'update-attach-header',
     'update-header',
     'lens-header',
+    'lens-toolbar',
   ];
 
   components.forEach((component) => {

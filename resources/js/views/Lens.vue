@@ -35,20 +35,30 @@
         v-model="search"
       />
 
-      <!-- Action Dropdown -->
-      <ActionDropdown
-        v-if="availableStandaloneActions.length > 0"
-        @actionExecuted="() => fetchPolicies()"
-        class="ml-auto"
-        :resource-name="resourceName"
-        :via-resource="''"
-        :via-resource-id="''"
-        :via-relationship="''"
-        :relationship-type="''"
-        :actions="availableStandaloneActions"
-        :selected-resources="selectedResourcesForActionSelector"
-        :endpoint="lensActionEndpoint"
-      />
+      <div class="inline-flex items-center gap-2 ml-auto">
+        <custom-index-toolbar
+          v-if="!viaResource"
+          :resource-name="resourceName"
+          :via-resource="viaResource"
+          :via-resource-id="viaResourceId"
+          :via-relationship="viaRelationship"
+        />
+
+        <!-- Action Dropdown -->
+        <ActionDropdown
+          v-if="availableStandaloneActions.length > 0"
+          @actionExecuted="() => fetchPolicies()"
+          class="ml-auto"
+          :resource-name="resourceName"
+          :via-resource="''"
+          :via-resource-id="''"
+          :via-relationship="''"
+          :relationship-type="''"
+          :actions="availableStandaloneActions"
+          :selected-resources="selectedResourcesForActionSelector"
+          :endpoint="lensActionEndpoint"
+        />
+      </div>
     </div>
 
     <Card>
