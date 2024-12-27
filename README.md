@@ -29,10 +29,10 @@ use ShuvroRoy\NovaDynamicViews\NovaDynamicViews;
 
 ...
 
-public function tools()
+public function tools(): array
 {
     return [
-        new NovaDynamicViews()
+        new NovaDynamicViews(),
     ];
 }
 ```
@@ -151,6 +151,7 @@ All `custom-*-*` nova placeholders are available as camel case methods postfixed
 - ✅ `customUpdateAttachHeaderComponents`
 - ✅ `customUpdateHeaderComponents`
 - ✅ `customLensHeaderComponents`
+- ✅ `customLensToolbarComponents`
 
 ## Create custom component
 
