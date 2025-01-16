@@ -1,14 +1,14 @@
+import { usePanelVisibility } from '../composables/usePanelVisibility'
+
 export default {
   emits: ['field-shown', 'field-hidden'],
 
   data: () => ({
-    visibleFieldsForPanel: {},
+    visibleFieldsForPanel: null,
   }),
 
   created() {
-    this.panel.fields.forEach(field => {
-      this.visibleFieldsForPanel[field.attribute] = field.visible
-    })
+    this.visibleFieldsForPanel = usePanelVisibility(this.panel, this.$emit)
   },
 
   methods: {
@@ -16,16 +16,14 @@ export default {
      * @param {string} field
      */
     handleFieldShown(field) {
-      this.visibleFieldsForPanel[field] = true
-      this.$emit('field-shown', field)
+      this.visibleFieldsForPanel.handleFieldShown(field)
     },
 
     /**
      * @param {string} field
      */
     handleFieldHidden(field) {
-      this.visibleFieldsForPanel[field] = false
-      this.$emit('field-hidden', field)
+      this.visibleFieldsForPanel.handleFieldHidden(field)
     },
   },
 
@@ -34,9 +32,7 @@ export default {
      * @returns {number}
      */
     visibleFieldsCount() {
-      return Object.values(this.visibleFieldsForPanel).filter(
-        visible => visible === true
-      ).length
+      return this.visibleFieldsForPanel.visibleFieldsCount
     },
   },
 }

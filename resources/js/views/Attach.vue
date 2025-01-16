@@ -70,6 +70,7 @@
                 :options="availableResources"
                 :debounce="field.debounce"
                 trackBy="value"
+                :autocomplete="field.autocomplete"
                 class="w-full"
                 :dusk="`${field.resourceName}-search-input`"
               >

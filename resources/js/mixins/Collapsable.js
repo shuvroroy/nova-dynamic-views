@@ -1,10 +1,17 @@
 export default {
+  props: {
+    collapsable: {
+      type: Boolean,
+      default: true,
+    },
+  },
+
   data: () => ({ collapsed: false }),
 
   created() {
     const value = localStorage.getItem(this.localStorageKey)
 
-    if (value !== 'undefined') {
+    if (value !== 'undefined' && this.collapsable === true) {
       this.collapsed = JSON.parse(value) ?? this.collapsedByDefault
     }
   },

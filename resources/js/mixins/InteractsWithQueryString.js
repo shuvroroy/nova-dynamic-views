@@ -18,7 +18,7 @@ export default {
               url: nextUrl,
               // clearHistory: page.clearHistory,
               encryptHistory: page.encryptHistory,
-              reserveScroll: true,
+              preserveScroll: true,
               preserveState: true,
             })
           }

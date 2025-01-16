@@ -1,8 +1,10 @@
+import { mapProps } from './propTypes'
 import { Errors } from '../util/FormValidation'
 
 export default {
   props: {
     errors: { default: () => new Errors() },
+    ...mapProps(['field']),
   },
 
   inject: { index: { default: null }, viaParent: { default: null } },

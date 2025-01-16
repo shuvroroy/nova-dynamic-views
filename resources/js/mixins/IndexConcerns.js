@@ -213,12 +213,9 @@ export default {
     },
 
     /**
-<<<<<<< HEAD
-     * Update the resource selection status.
-     *
-     * @param {object} resource
-=======
      * Deselect all selections
+     *
+     * @param {Event} e
      */
     deselectAllResources(e) {
       if (e) {
@@ -232,7 +229,8 @@ export default {
 
     /*
      * Update the resource selection status
->>>>>>> 5.0
+     *
+     * @param {object} resource
      */
     updateSelectionStatus(resource) {
       if (!includes(this.selectedResources, resource)) {

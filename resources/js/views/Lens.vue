@@ -36,7 +36,7 @@
       />
 
       <div class="inline-flex items-center gap-2 ml-auto">
-        <custom-index-toolbar
+        <custom-lens-toolbar
           v-if="!viaResource"
           :resource-name="resourceName"
           :via-resource="viaResource"
