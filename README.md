@@ -7,7 +7,8 @@
 
 This package will help to add some custom placeholder components like `custom-index-header`, `custom-index-toolbar`, `custom-detail-header`, `custom-detail-toolbar`, etc in various section in views. It provides a much easier API for it and it allows you to use these "placeholder" components multiple times without overwriting each other.
 
-![screenshot](https://user-images.githubusercontent.com/21066418/235350026-dd4a649f-01f2-4057-a6e6-9e147ec76fb6.png)
+<img width="1512" alt="Screenshot 2025-01-17 at 12 04 08 AM" src="https://github.com/user-attachments/assets/27a38967-3dc4-4b93-af8d-0e6a904882d2" />
+
 
 ## Requirements
 
