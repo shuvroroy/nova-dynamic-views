@@ -210,6 +210,19 @@ export default {
       this.getActions()
     },
 
+    /**
+     * Deselect all selections
+     */
+    deselectAllResources(e) {
+      if (e) {
+        e.preventDefault()
+      }
+
+      this.clearResourceSelections()
+
+      this.getActions()
+    },
+
     /*
      * Update the resource selection status
      */
@@ -227,7 +240,7 @@ export default {
     },
 
     /**
-     * Clear the selected resouces and the "select all" states.
+     * Clear the selected resources and the "select all" states.
      */
     clearResourceSelections() {
       this.selectAllMatchingResources = false

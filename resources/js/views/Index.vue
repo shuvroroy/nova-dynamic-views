@@ -47,14 +47,7 @@
           @update:keyword="search = $event"
         />
 
-        <div
-          v-if="
-            availableStandaloneActions.length > 0 ||
-            authorizedToCreate ||
-            authorizedToRelate
-          "
-          class="inline-flex items-center gap-2 ml-auto"
-        >
+        <div class="inline-flex items-center gap-2 ml-auto">
           <custom-index-toolbar
             v-if="!viaResource"
             :resource-name="resourceName"
@@ -76,6 +69,7 @@
 
           <!-- Create / Attach Button -->
           <CreateResourceButton
+            v-if="authorizedToCreate || authorizedToRelate"
             :label="createButtonLabel"
             :singular-name="singularName"
             :resource-name="resourceName"
@@ -133,7 +127,7 @@
           :restore-all-matching-resources="restoreAllMatchingResources"
           :restore-selected-resources="restoreSelectedResources"
           :select-all-matching-checked="selectAllMatchingResources"
-          @deselect="clearResourceSelections"
+          @deselect="deselectAllResources"
           :selected-resources="selectedResources"
           :selected-resources-for-action-selector="
             selectedResourcesForActionSelector
@@ -225,7 +219,6 @@
 </template>
 
 <script>
-// this.$refs.selectControl.selectedIndex = 0
 import { CancelToken, isCancel } from 'axios'
 import {
   HasCards,

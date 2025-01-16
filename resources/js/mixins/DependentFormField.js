@@ -141,7 +141,7 @@ export default {
           }
         )
         .then(response => {
-          let previousValue = this.currentField.value
+          let snapshot = JSON.parse(JSON.stringify(this.currentField))
           let wasVisible = this.currentlyIsVisible
 
           this.syncedField = response.data
@@ -156,7 +156,8 @@ export default {
           }
 
           if (isNil(this.syncedField.value)) {
-            this.syncedField.value = previousValue
+            this.syncedField.value = snapshot.value
+            this.revertSyncedFieldToPreviousValue(snapshot)
           } else {
             this.setInitialValue()
           }
@@ -179,6 +180,10 @@ export default {
 
           throw e
         })
+    },
+
+    revertSyncedFieldToPreviousValue(field) {
+      //
     },
 
     onSyncedField() {

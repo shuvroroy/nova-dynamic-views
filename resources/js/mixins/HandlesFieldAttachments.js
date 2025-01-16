@@ -19,7 +19,11 @@ export default {
     }
   },
 
-  data: () => ({ draftId: null }),
+  data: () => ({
+    draftId: null,
+    files: [],
+    filesToRemove: [],
+  }),
 
   methods: {
     /**
@@ -51,8 +55,9 @@ export default {
           data,
           { onUploadProgress }
         )
-        .then(({ data: { url } }) => {
-          const response = onCompleted(url)
+        .then(({ data: { path, url } }) => {
+          this.files.push({ path, url })
+          const response = onCompleted(path, url)
 
           this.$emit('file-upload-finished')
 
@@ -78,14 +83,24 @@ export default {
     /**
      * Remove an attachment from the server
      */
-    removeAttachment(attachmentUrl) {
-      Nova.request()
-        .delete(
-          `/nova-api/${this.resourceName}/field-attachment/${this.fieldAttribute}`,
-          { params: { attachmentUrl } }
-        )
-        .then(response => {})
-        .catch(error => {})
+    flagFileForRemoval(url) {
+      const fileIndex = this.files.findIndex(file => file.url === url)
+
+      if (fileIndex !== -1) {
+        this.filesToRemove.push(this.files[fileIndex])
+        return
+      }
+      // Case of deleting a file which was added prior to this draft
+      this.filesToRemove.push({ url })
+    },
+
+    unflagFileForRemoval(url) {
+      const fileIndex = this.filesToRemove.findIndex(file => file.url === url)
+
+      if (fileIndex === -1) {
+        return
+      }
+      this.filesToRemove.splice(fileIndex, 1)
     },
 
     /**
@@ -99,6 +114,27 @@ export default {
           )
           .then(response => {})
           .catch(error => {})
+      }
+    },
+
+    clearFilesMarkedForRemoval() {
+      if (this.field.withFiles) {
+        this.filesToRemove.forEach(file => {
+          console.log('deleting', file)
+          Nova.request()
+            .delete(
+              `/nova-api/${this.resourceName}/field-attachment/${this.fieldAttribute}`,
+              {
+                params: {
+                  attachment: file.path,
+                  attachmentUrl: file.url,
+                  draftId: this.draftId,
+                },
+              }
+            )
+            .then(response => {})
+            .catch(error => {})
+        })
       }
     },
 

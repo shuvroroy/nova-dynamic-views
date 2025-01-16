@@ -94,7 +94,7 @@
         :current-page-count="resources.length"
         :select-all-checked="selectAllChecked"
         :select-all-matching-checked="selectAllMatchingResources"
-        @deselect="clearResourceSelections"
+        @deselect="deselectAllResources"
         :selected-resources="selectedResources"
         :selected-resources-for-action-selector="
           selectedResourcesForActionSelector
