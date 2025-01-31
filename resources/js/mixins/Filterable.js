@@ -5,12 +5,35 @@ export default {
   data: () => ({
     filterHasLoaded: false,
     filterIsActive: false,
+    filtersAreApplied: false,
   }),
 
   watch: {
-    encodedFilters(value) {
-      Nova.$emit('filter-changed', [value])
+    encodedFilters(newValue, oldValue) {
+      if (
+        this.filterHasLoaded == false ||
+        newValue === this.initialEncodedFilters ||
+        ('' === this.initialEncodedFilters && this.filtersAreApplied === false)
+      ) {
+        return
+      }
+
+      Nova.$emit('filter-changed', [newValue])
+
+      const query = {
+        [this.filterParameter]: this.encodedFilters,
+      }
+
+      if (newValue !== oldValue) {
+        query[this.pageParameter] = 1
+      }
+
+      this.pushAfterUpdatingQueryString(query)
     },
+  },
+
+  created() {
+    this.filterCurrentEncoded = this.encodedFilters
   },
 
   methods: {
@@ -43,15 +66,11 @@ export default {
      * Handle a filter state change.
      */
     filterChanged() {
-      let filtersAreApplied =
+      this.filtersAreApplied =
         this.$store.getters[`${this.resourceName}/filtersAreApplied`]
 
-      if (filtersAreApplied || this.filterIsActive) {
+      if (this.filtersAreApplied || this.filterIsActive) {
         this.filterIsActive = true
-        this.pushAfterUpdatingQueryString({
-          [this.pageParameter]: 1,
-          [this.filterParameter]: this.encodedFilters,
-        })
       }
     },
 

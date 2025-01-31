@@ -25,10 +25,7 @@
       dusk="lens-heading"
     />
 
-    <div
-      v-if="searchable || availableStandaloneActions.length > 0"
-      class="flex items-center mb-6"
-    >
+    <div class="flex items-center mb-6">
       <IndexSearchInput
         v-if="searchable"
         :searchable="searchable"
