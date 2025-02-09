@@ -13,6 +13,7 @@ export default {
       return this.updateQueryString(value).then(
         ({ searchParams, nextUrl, page }) => {
           if (!isNull(nextUrl)) {
+            Nova.debug(`Router.push: "${nextUrl}"`)
             Nova.$router.push({
               component: page.component,
               url: nextUrl,
@@ -33,6 +34,7 @@ export default {
     visitAfterUpdatingQueryString(value) {
       return this.updateQueryString(value).then(({ searchParams, nextUrl }) => {
         if (!isNull(nextUrl)) {
+          Nova.debug(`Router.visit: "${nextUrl}"`)
           Nova.$router.visit(nextUrl)
         }
 

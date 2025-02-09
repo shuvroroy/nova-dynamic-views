@@ -1,3 +1,8 @@
+import { useResourceInformation } from '../composables/useResourceInformation'
+
+const { resourceInformation, viaResourceInformation, authorizedToCreate } =
+  useResourceInformation()
+
 export default {
   computed: {
     /**
@@ -6,11 +11,7 @@ export default {
      * @returns {object|null}
      */
     resourceInformation() {
-      return (
-        Nova.config('resources').find(resource => {
-          return resource.uriKey === this.resourceName
-        }) || null
-      )
+      return resourceInformation(this.resourceName)
     },
 
     /**
@@ -19,15 +20,7 @@ export default {
      * @returns {object|null}
      */
     viaResourceInformation() {
-      if (!this.viaResource) {
-        return
-      }
-
-      return (
-        Nova.config('resources').find(resource => {
-          return resource.uriKey === this.viaResource
-        }) || null
-      )
+      return viaResourceInformation(this.viaResource)
     },
 
     /**
@@ -36,13 +29,7 @@ export default {
      * @returns {boolean}
      */
     authorizedToCreate() {
-      if (
-        ['hasOneThrough', 'hasManyThrough'].indexOf(this.relationshipType) >= 0
-      ) {
-        return false
-      }
-
-      return this.resourceInformation?.authorizedToCreate || false
+      return authorizedToCreate(this.resourceName, this.relationshipType)
     },
   },
 }

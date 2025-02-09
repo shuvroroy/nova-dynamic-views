@@ -19,7 +19,7 @@ export default {
     ]),
 
     field: { type: Object },
-    initialPerPage: { type: Number, required: false },
+    perPageOptions: { type: Array, required: true },
   },
 
   provide() {
@@ -343,7 +343,6 @@ export default {
       this.perPage =
         this.queryStringParams[this.perPageParameter] ||
         this.initialPerPage ||
-        this.resourceInformation?.perPageOptions[0] ||
         null
     },
 
@@ -371,6 +370,19 @@ export default {
   },
 
   computed: {
+    /**
+     * Determibne the resource initial per page.
+     *
+     * @return {int|null}
+     */
+    initialPerPage() {
+      if (this.perPageOptions && this.perPageOptions.length > 0) {
+        return this.perPageOptions[0]
+      }
+
+      return null
+    },
+
     /**
      * Determine if the resource has any filters.
      *
@@ -711,15 +723,6 @@ export default {
     },
 
     /**
-     * Return the currently encoded filter string from the store.
-     *
-     * @param {string}
-     */
-    encodedFilters() {
-      return this.$store.getters[`${this.resourceName}/currentEncodedFilters`]
-    },
-
-    /**
      * Return the initial encoded filters from the query string.
      *
      * @param {string}
@@ -743,9 +746,7 @@ export default {
      * @param {boolean}
      */
     hasNextPage() {
-      return Boolean(
-        this.resourceResponse && this.resourceResponse.next_page_url
-      )
+      return Boolean(this.resourceResponse && this.resourceResponse.nextPageUrl)
     },
 
     /**
@@ -754,9 +755,7 @@ export default {
      * @param {boolean}
      */
     hasPreviousPage() {
-      return Boolean(
-        this.resourceResponse && this.resourceResponse.prev_page_url
-      )
+      return Boolean(this.resourceResponse && this.resourceResponse.prevPageUrl)
     },
 
     /**
@@ -791,17 +790,6 @@ export default {
      */
     currentPerPage() {
       return this.perPage
-    },
-
-    /**
-     * The per-page options configured for this resource.
-     *
-     * @param {number[]|null}
-     */
-    perPageOptions() {
-      if (this.resourceResponse) {
-        return this.resourceResponse.per_page_options
-      }
     },
 
     /**
