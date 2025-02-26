@@ -76,6 +76,17 @@ export default {
     },
 
     /**
+     * Provide a function to fills FormData when field.
+     *
+     * @param {FormData} formData
+     * @param {string} attribute
+     * @param {any} value
+     */
+    fillInto(formData, attribute, value) {
+      formData.append(attribute, value)
+    },
+
+    /**
      * Provide a function to fills FormData when field is visible.
      *
      * @param {FormData} formData
@@ -84,7 +95,7 @@ export default {
      */
     fillIfVisible(formData, attribute, value) {
       if (this.isVisible) {
-        formData.append(attribute, value)
+        this.fillInto(formData, attribute, value)
       }
     },
 

@@ -290,7 +290,7 @@ export default {
             this.resourceResponse = data
             this.resources = data.resources
             this.softDeletes = data.softDeletes
-            this.perPage = data.per_page
+            this.perPage = data.perPage
             this.resourceHasId = Boolean(data.hasId)
 
             this.handleResourcesLoaded()

@@ -114,7 +114,7 @@ export default {
      */
     fillIfVisible(formData, attribute, value) {
       if (this.currentlyIsVisible) {
-        formData.append(attribute, value)
+        this.fillInto(formData, attribute, value)
       }
     },
 

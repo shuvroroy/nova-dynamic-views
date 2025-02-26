@@ -144,7 +144,7 @@
 
               <Button
                 v-if="canShowNewRelationModal"
-                ariant="link"
+                variant="link"
                 size="small"
                 leading-icon="plus-circle"
                 @click="openRelationModal"
