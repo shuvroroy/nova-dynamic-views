@@ -248,6 +248,10 @@ export function useActions(props, emitter, store) {
       })
     }
 
+    if (data.event) {
+      Nova.$emit(data.event.key, data.event.payload)
+    }
+
     if (data.modal) {
       state.actionModalReponseData = data.modal
 

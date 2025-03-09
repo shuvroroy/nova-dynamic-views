@@ -244,9 +244,24 @@ export default {
         )
       }
 
-      return Boolean(
-        this.field.readonly || get(this.field, 'extraAttributes.readonly')
-      )
+      return this.isReadonly
+    },
+
+    /**
+     * Determine if the field is in immutable state.
+     *
+     * @return {boolean}
+     */
+    currentlyIsImmutable() {
+      if (this.syncedField !== null) {
+        return Boolean(
+          this.syncedField.readonly === false &&
+            this.syncedField.writable === true &&
+            get(this.syncedField, 'extraAttributes.readonly') === true
+        )
+      }
+
+      return this.isImmutable
     },
 
     /**

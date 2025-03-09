@@ -1,3 +1,4 @@
+import { uid } from 'uid/single'
 import minimum from '../util/minimum'
 
 export default {
@@ -28,6 +29,12 @@ export default {
     },
   },
 
+  data() {
+    return {
+      metricUniqueId: uid(),
+    }
+  },
+
   created() {
     Nova.$on('metric-refresh', this.fetch)
 
@@ -40,12 +47,24 @@ export default {
     }
   },
 
+  mounted() {
+    Nova.$emit('vue.mounted:metric', {
+      component: this,
+      id: this.metricUniqueId,
+    })
+  },
+
   beforeUnmount() {
     Nova.$off('metric-refresh', this.fetch)
     Nova.$off('resources-deleted', this.fetch)
     Nova.$off('resources-detached', this.fetch)
     Nova.$off('resources-restored', this.fetch)
     Nova.$off('action-executed', this.fetch)
+
+    Nova.$emit('vue.unmounted:metric', {
+      component: this,
+      id: this.metricUniqueId,
+    })
   },
 
   methods: {

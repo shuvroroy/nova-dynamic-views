@@ -177,6 +177,19 @@ export default {
     },
 
     /**
+     * Determine if the field is in immutable state.
+     *
+     * @return {boolean}
+     */
+    isImmutable() {
+      return Boolean(
+        this.field.readonly === false &&
+          this.field.writable === true &&
+          get(this.field, 'extraAttributes.readonly') === true
+      )
+    },
+
+    /**
      * Determine if the field is accessed from Action.
      *
      * @returns {boolean}
