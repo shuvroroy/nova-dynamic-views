@@ -188,6 +188,7 @@
               :selected-resource-ids="selectedResourceIds"
               :actions-are-available="allActions.length > 0"
               :should-show-checkboxes="shouldShowCheckboxes"
+              :should-show-select-all-checkboxes="shouldShowSelectAllCheckboxes"
               :via-resource="viaResource"
               :via-resource-id="viaResourceId"
               :via-relationship="viaRelationship"

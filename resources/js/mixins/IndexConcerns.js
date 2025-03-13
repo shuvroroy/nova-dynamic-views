@@ -53,20 +53,22 @@ export default {
   },
 
   data: () => ({
+    initialLoading: true,
+    loading: true,
+
     actions: [],
+    pivotActions: null,
+    resourceHasActions: false,
+    resourceHasSoleActions: false,
+
     allMatchingResourceCount: 0,
     authorizedToRelate: false,
     canceller: null,
     currentPageLoadMore: null,
     deleteModalOpen: false,
-    initialLoading: true,
-    loading: true,
     orderBy: '',
     orderByDirection: '',
-    pivotActions: null,
     resourceHasId: true,
-    resourceHasActions: false,
-    resourceHasSoleActions: false,
     resourceResponse: null,
     resourceResponseError: null,
     resources: [],
@@ -585,6 +587,8 @@ export default {
       } else if (this.resourceHasActions === true) {
         return true
       }
+
+      return false
     },
 
     /**
