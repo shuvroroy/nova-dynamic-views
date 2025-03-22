@@ -14,7 +14,7 @@ export default {
      * @param {object} resource
      */
     selectResource(resource) {
-      this.selectedResourceId = resource.value
+      this.selectedResourceId = resource?.value ?? null
 
       if (this.field) {
         if (typeof this['emitFieldValueChange'] == 'function') {

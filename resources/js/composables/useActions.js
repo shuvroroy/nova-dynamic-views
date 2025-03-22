@@ -139,6 +139,7 @@ export function useActions(props, emitter, store) {
   }
 
   function openConfirmationModal() {
+    state.errors = new Errors()
     state.actionModalVisible = true
   }
 
