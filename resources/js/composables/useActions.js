@@ -2,6 +2,7 @@ import { Errors } from '@/mixins'
 import { computed, nextTick, reactive } from 'vue'
 import filter from 'lodash/filter'
 import isObject from 'lodash/isObject'
+import range from 'lodash/range'
 import tap from 'lodash/tap'
 import trim from 'lodash/trim'
 import { useLocalization } from '@/composables/useLocalization'
@@ -190,7 +191,7 @@ export function useActions(props, emitter, store) {
         handleActionResponse(response.data, response.headers, then)
       })
       .catch(error => {
-        if (error.response && error.response.status === 422) {
+        if (error.response && range(400, 500).includes(error.response.status)) {
           if (responseType === 'blob') {
             error.response.data.text().then(data => {
               state.errors = new Errors(JSON.parse(data).errors)
