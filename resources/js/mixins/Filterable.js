@@ -6,6 +6,7 @@ export default {
     filterHasLoaded: false,
     filterIsActive: false,
     filtersAreApplied: false,
+    trashed: '',
   }),
 
   watch: {
@@ -54,9 +55,12 @@ export default {
         })
       }
 
+      this.trashed = ''
+
       this.pushAfterUpdatingQueryString({
         [this.pageParameter]: 1,
         [this.filterParameter]: '',
+        [this.trashedParameter]: '',
       })
 
       Nova.$emit('filter-reset')
@@ -72,6 +76,18 @@ export default {
       if (this.filtersAreApplied || this.filterIsActive) {
         this.filterIsActive = true
       }
+    },
+
+    /**
+     * Update the trashed constraint for the resource listing.
+     *
+     * @param {string} trashedStatus
+     */
+    trashedChanged(trashedStatus) {
+      this.trashed = trashedStatus
+      this.pushAfterUpdatingQueryString({
+        [this.trashedParameter]: this.trashed,
+      })
     },
 
     /**
@@ -132,7 +148,20 @@ export default {
      * @param {string}
      */
     filterParameter() {
-      return `${this.resourceName}_filter`
+      return this.viaRelationship
+        ? `${this.viaRelationship}_filter`
+        : `${this.resourceName}_filter`
+    },
+
+    /**
+     * Get the name of the trashed constraint query string variable.
+     *
+     * @param {string}
+     */
+    trashedParameter() {
+      return this.viaRelationship
+        ? `${this.viaRelationship}_trashed`
+        : `${this.resourceName}_trashed`
     },
 
     /**

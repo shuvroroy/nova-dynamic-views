@@ -76,7 +76,6 @@ export default {
     selectAllMatchingResources: false,
     selectedResources: [],
     softDeletes: false,
-    trashed: '',
   }),
 
   async created() {
@@ -305,18 +304,6 @@ export default {
      */
     initializeTrashedFromQueryString() {
       this.trashed = this.currentTrashed
-    },
-
-    /**
-     * Update the trashed constraint for the resource listing.
-     *
-     * @param {string} trashedStatus
-     */
-    trashedChanged(trashedStatus) {
-      this.trashed = trashedStatus
-      this.pushAfterUpdatingQueryString({
-        [this.trashedParameter]: this.trashed,
-      })
     },
 
     /**
@@ -907,17 +894,6 @@ export default {
       return this.viaRelationship
         ? `${this.viaRelationship}_direction`
         : `${this.resourceName}_direction`
-    },
-
-    /**
-     * Get the name of the trashed constraint query string variable.
-     *
-     * @param {string}
-     */
-    trashedParameter() {
-      return this.viaRelationship
-        ? `${this.viaRelationship}_trashed`
-        : `${this.resourceName}_trashed`
     },
 
     /**
