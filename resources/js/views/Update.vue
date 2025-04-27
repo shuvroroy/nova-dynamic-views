@@ -219,6 +219,7 @@ export default {
 
     async submitViaUpdateResource(e) {
       e.preventDefault()
+      this.isWorking = true
       this.submittedViaUpdateResource = true
       this.submittedViaUpdateResourceAndContinueEditing = false
       await this.updateResource()
@@ -226,6 +227,7 @@ export default {
 
     async submitViaUpdateResourceAndContinueEditing(e) {
       e.preventDefault()
+      this.isWorking = true
       this.submittedViaUpdateResourceAndContinueEditing = true
       this.submittedViaUpdateResource = false
       await this.updateResource()
@@ -245,8 +247,6 @@ export default {
      * Update the resource using the provided data.
      */
     async updateResource() {
-      this.isWorking = true
-
       if (this.$refs.form.reportValidity()) {
         try {
           const {
@@ -282,9 +282,9 @@ export default {
               this.getFields()
 
               this.resetErrors()
+              this.isWorking = false
               this.submittedViaUpdateResource = false
               this.submittedViaUpdateResourceAndContinueEditing = false
-              this.isWorking = false
             }
 
             return
@@ -292,6 +292,7 @@ export default {
         } catch (error) {
           window.scrollTo(0, 0)
 
+          this.isWorking = false
           this.submittedViaUpdateResource = false
           this.submittedViaUpdateResourceAndContinueEditing = false
 
@@ -299,9 +300,9 @@ export default {
         }
       }
 
+      this.isWorking = false
       this.submittedViaUpdateResource = false
       this.submittedViaUpdateResourceAndContinueEditing = false
-      this.isWorking = false
     },
 
     /**

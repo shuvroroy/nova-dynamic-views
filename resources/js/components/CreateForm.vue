@@ -233,12 +233,15 @@ export default {
 
     async submitViaCreateResource(e) {
       e.preventDefault()
+      this.isWorking = true
       this.submittedViaCreateResource = true
       this.submittedViaCreateResourceAndAddAnother = false
       await this.createResource()
     },
 
-    async submitViaCreateResourceAndAddAnother() {
+    async submitViaCreateResourceAndAddAnother(e) {
+      e.preventDefault()
+      this.isWorking = true
       this.submittedViaCreateResourceAndAddAnother = true
       this.submittedViaCreateResource = false
       await this.createResource()
@@ -248,8 +251,6 @@ export default {
      * Create a new resource instance using the provided data.
      */
     async createResource() {
-      this.isWorking = true
-
       if (this.$refs.form.reportValidity()) {
         try {
           const {
