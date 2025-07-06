@@ -44,8 +44,8 @@
     <template v-if="!shouldBeCollapsed">
       <div class="flex gap-2 mb-6">
         <IndexSearchInput
-          v-if="resourceInformation && resourceInformation.searchable"
-          :searchable="resourceInformation && resourceInformation.searchable"
+          v-if="hasResourceSearch"
+          :searchable="hasResourceSearch"
           v-model="search"
         />
 
@@ -74,7 +74,7 @@
 
           <!-- Create / Attach Button -->
           <CreateResourceButton
-            v-if="authorizedToCreate || authorizedToRelate"
+            v-if="hasResourceActionControls"
             :label="createButtonLabel"
             :singular-name="singularName"
             :resource-name="resourceName"
@@ -630,6 +630,20 @@ export default {
           }
         }
       }
+    },
+
+    hasResourceSearch() {
+      return Boolean(
+        this.resourceInformation && this.resourceInformation.searchable
+      )
+    },
+
+    hasResourceActionControls() {
+      return Boolean(
+        this.availableStandaloneActions.length > 0 ||
+          (this.relationshipType === '' && this.authorizedToCreate) ||
+          (this.relationshipType !== '' && this.authorizedToRelate)
+      )
     },
   },
 }
