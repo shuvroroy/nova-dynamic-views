@@ -18,11 +18,10 @@ export default {
     async fetchPreviewContent(value) {
       Nova.$progress.start()
 
-      let editMode = this.resourceId == null ? 'create' : 'update'
-      let endpoint =
-        this.resourceId == null
-          ? `/nova-api/${this.resourceName}/field/${this.field.attribute}/preview`
-          : `/nova-api/${this.resourceName}/${this.resourceId}/field/${this.field.attribute}/preview`
+      let editMode = !filled(this.resourceId) ? 'create' : 'update'
+      let endpoint = !filled(this.resourceId)
+        ? `/nova-api/${this.resourceName}/field/${this.field.attribute}/preview`
+        : `/nova-api/${this.resourceName}/${this.resourceId}/field/${this.field.attribute}/preview`
 
       if (filled(this.relatedResourceName)) {
         editMode = this.relatedResourceId == null ? 'attach' : 'update-attached'

@@ -1,3 +1,5 @@
+import filled from '../util/filled'
+
 export default {
   props: {
     formUniqueId: {
@@ -71,7 +73,7 @@ export default {
      * @returns {boolean}
      */
     hasFormUniqueId() {
-      return this.formUniqueId != null && this.formUniqueId !== ''
+      return filled(this.formUniqueId)
     },
 
     /**

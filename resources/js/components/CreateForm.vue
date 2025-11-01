@@ -31,7 +31,7 @@
         <component
           v-for="panel in panels"
           :key="panel.id"
-          :is="'form-' + panel.component"
+          :is="`form-${panel.component}`"
           @field-changed="onUpdateFormStatus"
           @file-upload-started="handleFileUploadStarted"
           @file-upload-finished="handleFileUploadFinished"
@@ -94,6 +94,7 @@ import {
 import { mapActions, mapMutations } from 'vuex'
 import { Button } from 'laravel-nova-ui'
 import tap from 'lodash/tap'
+import filled from '@/util/filled'
 
 export default {
   components: {
@@ -130,6 +131,7 @@ export default {
       'viaResource',
       'viaResourceId',
       'viaRelationship',
+      'relationshipType',
       'shouldOverrideMeta',
     ]),
   },
@@ -329,7 +331,7 @@ export default {
           })
         })
 
-        if (this.fromResourceId != null) {
+        if (filled(this.fromResourceId)) {
           formData.append('fromResourceId', this.fromResourceId)
         }
 
