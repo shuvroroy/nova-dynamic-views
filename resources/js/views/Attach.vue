@@ -289,6 +289,7 @@ export default {
   data: () => ({
     initialLoading: true,
     loading: true,
+    isWorking: false,
     submittedViaAttachAndAttachAnother: false,
     submittedViaAttachResource: false,
 
@@ -627,16 +628,6 @@ export default {
      */
     isSearchable() {
       return this.field.searchable
-    },
-
-    /**
-     * Determine if the form is being processed
-     */
-    isWorking() {
-      return (
-        this.submittedViaAttachResource ||
-        this.submittedViaAttachAndAttachAnother
-      )
     },
 
     /**

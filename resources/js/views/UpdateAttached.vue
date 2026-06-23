@@ -214,6 +214,7 @@ export default {
   data: () => ({
     initialLoading: true,
     loading: true,
+    isWorking: false,
     submittedViaUpdateAndContinueEditing: false,
     submittedViaUpdateAttachedResource: false,
 
@@ -553,16 +554,6 @@ export default {
      */
     isSearchable() {
       return this.field.searchable
-    },
-
-    /**
-     * Determine if the form is being processed
-     */
-    isWorking() {
-      return (
-        this.submittedViaUpdateAttachedResource ||
-        this.submittedViaUpdateAndContinueEditing
-      )
     },
 
     selectedResource() {

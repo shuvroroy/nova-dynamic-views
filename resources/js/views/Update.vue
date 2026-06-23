@@ -353,6 +353,16 @@ export default {
   },
 
   computed: {
+    /**
+     * Determine if the form is being processed
+     */
+    isWorking() {
+      return (
+        this.submittedViaUpdateResource ||
+        this.submittedViaUpdateResourceAndContinueEditing
+      )
+    },
+
     wasSubmittedViaUpdateResourceAndContinueEditing() {
       return this.isWorking && this.submittedViaUpdateResourceAndContinueEditing
     },

@@ -1,10 +1,6 @@
 import { mapGetters, mapMutations } from 'vuex'
 
 export default {
-  props: {
-    show: { type: Boolean, default: false },
-  },
-
   methods: {
     ...mapMutations(['allowLeavingModal', 'preventLeavingModal']),
 
