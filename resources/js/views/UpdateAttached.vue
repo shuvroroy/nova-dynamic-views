@@ -214,7 +214,7 @@ export default {
   data: () => ({
     initialLoading: true,
     loading: true,
-    isWorking: false,
+    isProcessing: false,
     submittedViaUpdateAndContinueEditing: false,
     submittedViaUpdateAttachedResource: false,
 
@@ -387,14 +387,16 @@ export default {
      * Update the attached resource.
      */
     async updateAttachedResource() {
-      this.isWorking = true
+      this.isProcessing = true
       this.submittedViaUpdateAttachedResource = true
+      this.submittedViaUpdateAndContinueEditing = false
 
       try {
         await this.updateRequest()
 
-        this.isWorking = false
+        this.isProcessing = false
         this.submittedViaUpdateAttachedResource = false
+        this.submittedViaUpdateAndContinueEditing = false
 
         await this.fetchPolicies(),
           Nova.success(this.__('The resource was updated!'))
@@ -403,8 +405,9 @@ export default {
       } catch (error) {
         window.scrollTo(0, 0)
 
-        this.isWorking = false
+        this.isProcessing = false
         this.submittedViaUpdateAttachedResource = false
+        this.submittedViaUpdateAndContinueEditing = false
 
         this.handleOnUpdateResponseError(error)
       }
@@ -414,7 +417,8 @@ export default {
      * Update the resource and reset the form
      */
     async updateAndContinueEditing() {
-      this.isWorking = true
+      this.isProcessing = true
+      this.submittedViaUpdateAttachedResource = false
       this.submittedViaUpdateAndContinueEditing = true
 
       try {
@@ -424,7 +428,8 @@ export default {
 
         this.disableNavigateBackUsingHistory()
 
-        this.isWorking = false
+        this.isProcessing = false
+        this.submittedViaUpdateAttachedResource = false
         this.submittedViaUpdateAndContinueEditing = false
 
         Nova.success(this.__('The resource was updated!'))
@@ -432,7 +437,8 @@ export default {
         // Reset the form by refetching the fields
         this.initializeComponent()
       } catch (error) {
-        this.isWorking = false
+        this.isProcessing = false
+        this.submittedViaUpdateAttachedResource = false
         this.submittedViaUpdateAndContinueEditing = false
 
         this.handleOnUpdateResponseError(error)
@@ -521,6 +527,17 @@ export default {
   },
 
   computed: {
+    /**
+     * Determine if the form is being processed
+     */
+    isWorking() {
+      return (
+        this.isProcessing ||
+        this.submittedViaUpdateAttachedResource ||
+        this.submittedViaUpdateAndContinueEditing
+      )
+    },
+
     /**
      * Get the attachment endpoint for the relationship type.
      */

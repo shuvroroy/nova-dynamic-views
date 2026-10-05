@@ -126,6 +126,7 @@ export default {
   data: () => ({
     relationResponse: null,
     loading: true,
+    isProcessing: false,
     submittedViaUpdateResourceAndContinueEditing: false,
     submittedViaUpdateResource: false,
     title: null,
@@ -219,7 +220,7 @@ export default {
 
     async submitViaUpdateResource(e) {
       e.preventDefault()
-      this.isWorking = true
+      this.isProcessing = true
       this.submittedViaUpdateResource = true
       this.submittedViaUpdateResourceAndContinueEditing = false
       await this.updateResource()
@@ -227,7 +228,7 @@ export default {
 
     async submitViaUpdateResourceAndContinueEditing(e) {
       e.preventDefault()
-      this.isWorking = true
+      this.isProcessing = true
       this.submittedViaUpdateResourceAndContinueEditing = true
       this.submittedViaUpdateResource = false
       await this.updateResource()
@@ -282,9 +283,11 @@ export default {
               this.getFields()
 
               this.resetErrors()
-              this.isWorking = false
+
+              this.isProcessing = false
               this.submittedViaUpdateResource = false
               this.submittedViaUpdateResourceAndContinueEditing = false
+              this.cancelWorkingOnFileUploads()
             }
 
             return
@@ -292,17 +295,19 @@ export default {
         } catch (error) {
           window.scrollTo(0, 0)
 
-          this.isWorking = false
+          this.isProcessing = false
           this.submittedViaUpdateResource = false
           this.submittedViaUpdateResourceAndContinueEditing = false
+          this.cancelWorkingOnFileUploads()
 
           this.handleOnUpdateResponseError(error)
         }
       }
 
-      this.isWorking = false
+      this.isProcessing = false
       this.submittedViaUpdateResource = false
       this.submittedViaUpdateResourceAndContinueEditing = false
+      this.cancelWorkingOnFileUploads()
     },
 
     /**
@@ -358,17 +363,20 @@ export default {
      */
     isWorking() {
       return (
-        this.submittedViaUpdateResource ||
-        this.submittedViaUpdateResourceAndContinueEditing
+        this.isWorkingOnFileUploads ||
+        this.wasSubmittedViaUpdateResource ||
+        this.wasSubmittedViaUpdateResourceAndContinueEditing
       )
     },
 
     wasSubmittedViaUpdateResourceAndContinueEditing() {
-      return this.isWorking && this.submittedViaUpdateResourceAndContinueEditing
+      return (
+        this.isProcessing && this.submittedViaUpdateResourceAndContinueEditing
+      )
     },
 
     wasSubmittedViaUpdateResource() {
-      return this.isWorking && this.submittedViaUpdateResource
+      return this.isProcessing && this.submittedViaUpdateResource
     },
 
     singularName() {

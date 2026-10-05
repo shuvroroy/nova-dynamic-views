@@ -289,7 +289,7 @@ export default {
   data: () => ({
     initialLoading: true,
     loading: true,
-    isWorking: false,
+    isProcessing: false,
     submittedViaAttachAndAttachAnother: false,
     submittedViaAttachResource: false,
 
@@ -444,14 +444,16 @@ export default {
      * Attach the selected resource.
      */
     async attachResource() {
-      this.isWorking = true
+      this.isProcessing = true
       this.submittedViaAttachResource = true
+      this.submittedViaAttachAndAttachAnother = false
 
       try {
         await this.attachRequest()
 
-        this.isWorking = false
+        this.isProcessing = false
         this.submittedViaAttachResource = false
+        this.submittedViaAttachAndAttachAnother = false
 
         await this.fetchPolicies(),
           Nova.success(this.__('The resource was attached!'))
@@ -460,8 +462,9 @@ export default {
       } catch (error) {
         window.scrollTo(0, 0)
 
-        this.isWorking = false
+        this.isProcessing = false
         this.submittedViaAttachResource = false
+        this.submittedViaAttachAndAttachAnother = false
 
         this.handleOnCreateResponseError(error)
       }
@@ -471,7 +474,8 @@ export default {
      * Attach a new resource and reset the form
      */
     async attachAndAttachAnother() {
-      this.isWorking = true
+      this.isProcessing = true
+      this.submittedViaAttachResource = false
       this.submittedViaAttachAndAttachAnother = true
 
       try {
@@ -481,7 +485,8 @@ export default {
 
         this.disableNavigateBackUsingHistory()
 
-        this.isWorking = false
+        this.isProcessing = false
+        this.submittedViaAttachResource = false
         this.submittedViaAttachAndAttachAnother = false
 
         await this.fetchPolicies(),
@@ -490,7 +495,8 @@ export default {
         // Reset the form by refetching the fields
         this.initializeComponent()
       } catch (error) {
-        this.isWorking = false
+        this.isProcessing = false
+        this.submittedViaAttachResource = false
         this.submittedViaAttachAndAttachAnother = false
 
         this.handleOnCreateResponseError(error)
@@ -595,6 +601,17 @@ export default {
   },
 
   computed: {
+    /**
+     * Determine if the form is being processed
+     */
+    isWorking() {
+      return (
+        this.isProcessing ||
+        this.submittedViaAttachResource ||
+        this.submittedViaAttachAndAttachAnother
+      )
+    },
+
     /**
      * Get the attachment endpoint for the relationship type.
      */

@@ -1,5 +1,5 @@
 export default {
-  data: () => ({ isWorking: false, fileUploadsCount: 0 }),
+  data: () => ({ isWorkingOnFileUploads: false, fileUploadsCount: 0 }),
 
   methods: {
     /**
@@ -10,7 +10,7 @@ export default {
 
       if (this.fileUploadsCount < 1) {
         this.fileUploadsCount = 0
-        this.isWorking = false
+        this.cancelWorkingOnFileUploads()
       }
     },
 
@@ -18,8 +18,12 @@ export default {
      * Handle file upload starting
      */
     handleFileUploadStarted() {
-      this.isWorking = true
+      this.isWorkingOnFileUploads = true
       this.fileUploadsCount++
+    },
+
+    cancelWorkingOnFileUploads() {
+      this.isWorkingOnFileUploads = false
     },
   },
 }

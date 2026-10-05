@@ -67,6 +67,7 @@
           v-if="shouldShowAddAnotherButton"
           @click="submitViaCreateResourceAndAddAnother"
           :label="__('Create & Add Another')"
+          :disabled="isWorking"
           :loading="wasSubmittedViaCreateResourceAndAddAnother"
           dusk="create-and-add-another-button"
         />
@@ -139,6 +140,7 @@ export default {
   data: () => ({
     relationResponse: null,
     loading: true,
+    isProcessing: false,
     submittedViaCreateResourceAndAddAnother: false,
     submittedViaCreateResource: false,
     fields: [],
@@ -235,7 +237,7 @@ export default {
 
     async submitViaCreateResource(e) {
       e.preventDefault()
-      this.isWorking = true
+      this.isProcessing = true
       this.submittedViaCreateResource = true
       this.submittedViaCreateResourceAndAddAnother = false
       await this.createResource()
@@ -243,7 +245,7 @@ export default {
 
     async submitViaCreateResourceAndAddAnother(e) {
       e.preventDefault()
-      this.isWorking = true
+      this.isProcessing = true
       this.submittedViaCreateResourceAndAddAnother = true
       this.submittedViaCreateResource = false
       await this.createResource()
@@ -280,9 +282,11 @@ export default {
             // Reset the form by refetching the fields
             this.getFields()
             this.resetErrors()
+
             this.submittedViaCreateAndAddAnother = false
             this.submittedViaCreateResource = false
-            this.isWorking = false
+            this.isProcessing = false
+            this.cancelWorkingOnFileUploads()
 
             return
           }
@@ -290,8 +294,9 @@ export default {
           window.scrollTo(0, 0)
 
           this.submittedViaCreateAndAddAnother = false
-          this.submittedViaCreateResource = true
-          this.isWorking = false
+          this.submittedViaCreateResource = false
+          this.isProcessing = false
+          this.cancelWorkingOnFileUploads()
 
           if (this.mode !== 'form') this.preventLeavingModal()
 
@@ -299,9 +304,11 @@ export default {
         }
       }
 
+      this.isProcessing = false
       this.submittedViaCreateAndAddAnother = false
-      this.submittedViaCreateResource = true
-      this.isWorking = false
+      this.submittedViaCreateResource = false
+      this.isProcessing = false
+      this.cancelWorkingOnFileUploads()
     },
 
     /**
@@ -350,12 +357,23 @@ export default {
   },
 
   computed: {
+    /**
+     * Determine if the form is being processed
+     */
+    isWorking() {
+      return (
+        this.isWorkingOnFileUploads ||
+        this.wasSubmittedViaCreateResource ||
+        this.wasSubmittedViaCreateResourceAndAddAnother
+      )
+    },
+
     wasSubmittedViaCreateResource() {
-      return this.isWorking && this.submittedViaCreateResource
+      return this.isProcessing && this.submittedViaCreateResource
     },
 
     wasSubmittedViaCreateResourceAndAddAnother() {
-      return this.isWorking && this.submittedViaCreateResourceAndAddAnother
+      return this.isProcessing && this.submittedViaCreateResourceAndAddAnother
     },
 
     singularName() {
